@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <title>보드게임 - 온라인</title>
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        padding: 0;
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI',
+          sans-serif;
+        background: #f7f7f7;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+      }
+      .hidden {
+        display: none;
+      }
+
+      /* 프로필 설정 화면 */
+      #profile-screen {
+        width: 360px;
+        background: #ffffff;
+        border: 1px solid #ddd;
+        padding: 24px;
+        border-radius: 12px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+      }
+      #profile-screen h1 {
+        font-size: 18px;
+        margin: 0 0 8px;
+      }
+      #profile-screen label {
+        font-size: 14px;
+        display: block;
+        margin-top: 16px;
+        margin-bottom: 8px;
+      }
+      #nickname-input,
+      #color-select {
+        width: 100%;
+        padding: 10px 12px;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        font-size: 14px;
+      }
+      .avatar-dropzone {
+        width: 100%;
+        aspect-ratio: 1 / 1;
+        border: 1px dashed #bbb;
+        border-radius: 8px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 14px;
+        color: #777;
+        cursor: pointer;
+        position: relative;
+        overflow: hidden;
+      }
+      .avatar-dropzone img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+      #enter-game-btn {
+        margin-top: 20px;
+        width: 100%;
+        padding: 12px;
+        border-radius: 8px;
+        border: none;
+        background: #222;
+        color: #fff;
+        font-size: 15px;
+        cursor: pointer;
+      }
+      #enter-game-btn:disabled {
+        opacity: 0.6;
+        cursor: default;
+      }
+
+      /* 게임 화면 */
+      #game-screen {
+        width: 100%;
+        max-width: 1200px;
+        height: 90vh;
+        background: #ffffff;
+        border-radius: 16px;
+        border: 1px solid #ddd;
+        padding: 16px 24px 24px;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+
+      #round-header {
+        font-size: 24px;
+        font-weight: 700;
+        letter-spacing: 4px;
+      }
+
+      #top-player-area {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .player-panel {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .avatar-circle {
+        width: 56px;
+        height: 56px;
+        border-radius: 50%;
+        border: 1px solid #ccc;
+        overflow: hidden;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #f5f5f5;
+      }
+      .avatar-circle img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+
+      .player-name {
+        font-weight: 600;
+        margin-bottom: 4px;
+      }
+      .player-money {
+        font-size: 14px;
+        color: #555;
+      }
+
+      #center-area {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 8px;
+      }
+
+      #turn-indicator {
+        font-size: 16px;
+        margin-bottom: 4px;
+      }
+
+      #rolled-dice-row {
+        display: flex;
+        gap: 4px;
+        margin-bottom: 4px;
+        min-height: 40px;
+        justify-content: center;
+        flex-wrap: wrap;
+      }
+
+      .die {
+        width: 32px;
+        height: 32px;
+        border-radius: 4px;
+        border: 1px solid #999;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 16px;
+        background: #fff;
+      }
+
+      .die.small-die {
+        width: 16px;
+        height: 16px;
+        font-size: 10px;
+      }
+
+      .animating-die {
+        position: fixed;
+        z-index: 999;
+        pointer-events: none;
+        transition: top 0.4s ease, left 0.4s ease, transform 0.4s ease;
+      }
+
+      /* 플레이어 색 */
+      .die.color-red {
+        border-color: #ef4444;
+        background: #fee2e2;
+      }
+      .die.color-green {
+        border-color: #22c55e;
+        background: #dcfce7;
+      }
+      .die.color-blue {
+        border-color: #3b82f6;
+        background: #dbeafe;
+      }
+      .die.color-yellow {
+        border-color: #eab308;
+        background: #fef9c3;
+      }
+
+      /* 중립은 그냥 흰색 */
+      .die.neutral {
+        border-color: #999;
+        background: #ffffff;
+      }
+
+      #roll-btn,
+      #start-game-btn {
+        padding: 8px 16px;
+        border-radius: 8px;
+        border: none;
+        background: #222;
+        color: #fff;
+        cursor: pointer;
+        font-size: 14px;
+        margin: 0 4px;
+      }
+      #roll-btn:disabled,
+      #start-game-btn:disabled {
+        opacity: 0.5;
+        cursor: default;
+      }
+
+      #choice-row {
+        display: flex;
+        gap: 4px;
+        min-height: 32px;
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+      .choice-btn {
+        padding: 4px 8px;
+        border-radius: 6px;
+        border: 1px solid #888;
+        background: #fdfdfd;
+        font-size: 13px;
+        cursor: pointer;
+      }
+
+      #round-config {
+        font-size: 12px;
+        margin-top: 4px;
+      }
+      #round-count-select {
+        padding: 2px 4px;
+        font-size: 12px;
+      }
+
+      /* 카지노 6개 영역 */
+      #casino-row {
+        display: grid;
+        grid-template-columns: repeat(6, 1fr);
+        gap: 8px;
+        flex: 1;
+      }
+      .casino {
+        border: 1px solid #ccc;
+        border-radius: 16px 16px 8px 8px;
+        padding: 8px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+      }
+      .casino-header {
+        display: flex;
+        justify-content: center;
+        margin-bottom: 4px;
+      }
+      .casino-die {
+        width: 28px;
+        height: 28px;
+        border-radius: 4px;
+        border: 1px solid #999;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 14px;
+        background: #fafafa;
+      }
+      .casino-dice-summary {
+        font-size: 11px;
+        min-height: 16px;
+        margin-bottom: 4px;
+      }
+      .casino-dice-area {
+        min-height: 24px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 2px;
+        margin-bottom: 4px;
+      }
+      .casino-money-list {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+        align-items: flex-end;
+        font-size: 12px;
+      }
+      .casino-money {
+        padding: 2px 6px;
+        border-radius: 4px;
+        border: 1px solid #bbb;
+        background: #fdfdfd;
+      }
+
+      /* 내 정보 영역 */
+      #bottom-player-area {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 4px;
+      }
+
+      #my-dice-row,
+      #opponent-dice-row {
+        display: flex;
+        gap: 2px;
+      }
+
+      #log-area {
+        font-size: 12px;
+        max-height: 90px;
+        overflow-y: auto;
+        border-top: 1px solid #eee;
+        padding-top: 4px;
+        color: #555;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- 프로필 설정 화면 -->
+    <div id="profile-screen">
+      <h1>닉네임</h1>
+      <input id="nickname-input" type="text" placeholder="닉네임을 입력하세요" />
+
+      <label>프로필 사진</label>
+      <div id="avatar-drop" class="avatar-dropzone">
+        <span id="avatar-drop-text">클릭해서 업로드</span>
+        <input
+          id="avatar-input"
+          type="file"
+          accept="image/*"
+          style="display: none"
+        />
+      </div>
+
+      <label>색깔 선택</label>
+      <select id="color-select">
+        <option value="red">빨강</option>
+        <option value="green">초록</option>
+        <option value="blue">파랑</option>
+        <option value="yellow">노랑</option>
+      </select>
+
+      <button id="enter-game-btn">게임 입장</button>
+    </div>
+
+    <!-- 게임 화면 -->
+    <div id="game-screen" class="hidden">
+      <div id="round-header">ROUND <span id="round-number">1</span></div>
+
+      <div id="top-player-area">
+        <div id="opponent-panel" class="player-panel">
+          <div class="avatar-circle">
+            <img id="opponent-avatar" alt="" />
+          </div>
+          <div>
+            <div id="opponent-name" class="player-name">상대 플레이어</div>
+            <div id="opponent-money" class="player-money">0 $</div>
+          </div>
+          <div id="opponent-dice-row"></div>
+        </div>
+      </div>
+
+      <div id="center-area">
+        <div id="turn-indicator">대기 중…</div>
+        <div>
+          <button id="start-game-btn" disabled>게임 시작</button>
+          <button id="roll-btn" disabled>굴리기</button>
+        </div>
+        <div id="round-config">
+          라운드 수:
+          <select id="round-count-select">
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4" selected>4</option>
+          </select>
+        </div>
+        <div id="rolled-dice-row"></div>
+        <div id="choice-row"></div>
+      </div>
+
+      <div id="casino-row">
+        <!-- 6개 카지노는 JS에서 생성 -->
+      </div>
+
+      <div id="bottom-player-area">
+        <div class="player-panel">
+          <div class="avatar-circle">
+            <img id="my-avatar" alt="" />
+          </div>
+          <div>
+            <div id="my-name" class="player-name">나</div>
+            <div id="my-money" class="player-money">0 $</div>
+          </div>
+          <div id="my-dice-row"></div>
+        </div>
+      </div>
+
+      <div id="log-area"></div>
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="client.js"></script>
+  </body>
+</html>
