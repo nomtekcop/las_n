@@ -221,21 +221,20 @@ function updateCasinoDiceSummaries(casinosState) {
     diceArea.innerHTML = '';
 
     players.forEach((p) => {
-      const count = c.diceByPlayer?.[p.id] || 0;
-      for (let i = 0; i < count; i++) {
-        const cls = 'small-die color-' + (p.color || 'red');
-        const dieEl = createDie('', cls);
-        diceArea.appendChild(dieEl);
-      }
-    });
+  const count = c.diceByPlayer?.[p.id] || 0;
+  for (let i = 0; i < count; i++) {
+    const cls = 'small-die color-' + (p.color || 'red');
+    // ✅ 카지노 번호(c.index)를 눈 값으로 넘겨서 점 찍기
+    const dieEl = createDie(c.index, cls);
+    diceArea.appendChild(dieEl);
+  }
+});
 
-    // 중립 주사위도 아이콘만
-    const neutralCount = c.neutralCount || 0;
-    for (let i = 0; i < neutralCount; i++) {
-      const dieEl = createDie('', 'small-die neutral');
-      diceArea.appendChild(dieEl);
-    }
-  });
+// 중립 주사위도 같은 번호 눈으로 표시
+const neutralCount = c.neutralCount || 0;
+for (let i = 0; i < neutralCount; i++) {
+  const dieEl = createDie(c.index, 'small-die neutral');
+  diceArea.appendChild(dieEl);
 }
 
 
