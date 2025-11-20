@@ -73,6 +73,24 @@ function addLog(text) {
 
 // 주사위 DOM
 function createDie(value, cssClass) {
+  const isNeutral = cssClass && cssClass.includes('neutral');
+
+  // ✅ 중립 주사위인 경우 → 이미지 사용
+  if (isNeutral) {
+    const img = document.createElement('img');
+    img.className = 'die-img' + (cssClass ? ' ' + cssClass : '');
+
+    let v = Number(value);
+
+    // 값이 없으면 일단 1로 처리 (카지노 요약/남은주사위용)
+    if (!(v >= 1 && v <= 6)) v = 1;
+
+    img.src = `neutral-${v}.png`; // 🎯 숫자에 따라 자동으로 파일 선택됨
+    img.alt = `neutral dice ${v}`;
+    return img;
+  }
+
+  // 🎨 플레이어 색 주사위 (아직은 기존 div 방식)
   const div = document.createElement('div');
   div.className = 'die' + (cssClass ? ' ' + cssClass : '');
   div.textContent = value;
