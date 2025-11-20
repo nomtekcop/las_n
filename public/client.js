@@ -75,7 +75,18 @@ function addLog(text) {
 function createDie(value, cssClass) {
   const div = document.createElement('div');
   div.className = 'die' + (cssClass ? ' ' + cssClass : '');
-  div.textContent = value;
+
+  const v = Number(value);
+
+  // 1~6이면 숫자 대신 눈(●)으로 표현할 준비
+  if (v >= 1 && v <= 6) {
+    div.classList.add('value-' + v);
+    // 숫자는 보여줄 필요 없으니까 텍스트는 넣지 않음
+  } else {
+    // 그 외(예: 그냥 색 표시용 작은 주사위, 혹은 다른 용도)는 그대로 텍스트
+    div.textContent = value;
+  }
+
   return div;
 }
 
