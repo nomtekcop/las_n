@@ -200,6 +200,21 @@ function animateRoundSetup(payload) {
         const div = document.createElement('div');
         div.className = 'casino-money';
         div.textContent = note.toLocaleString() + ' $';
+
+        // 💰 금액별로 색상을 주기 위한 클래스
+        switch (note) {
+          case 10000: div.classList.add('money-10000'); break;
+          case 20000: div.classList.add('money-20000'); break;
+          case 30000: div.classList.add('money-30000'); break;
+          case 40000: div.classList.add('money-40000'); break;
+          case 50000: div.classList.add('money-50000'); break;
+          case 60000: div.classList.add('money-60000'); break;
+          case 70000: div.classList.add('money-70000'); break;
+          case 80000: div.classList.add('money-80000'); break;
+          case 90000: div.classList.add('money-90000'); break;
+          default: break;
+        }
+
         moneyList.appendChild(div);
       }, delay);
       delay += stepDelay;
