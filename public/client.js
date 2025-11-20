@@ -635,27 +635,37 @@ function updateAvatarBorders() {
 function darkenTiedDiceForCasino(casinoIndex) {
   if (!latestCasinosState || latestCasinosState.length === 0) return;
 
+  // 1) 이 카지노 상태 찾기
   const casino = latestCasinosState.find((c) => c.index === casinoIndex);
   if (!casino || !casino.diceByPlayer) return;
 
+  // 2) 각 플레이어별 주사위 개수 (0개는 제외)
   const entries = Object.entries(casino.diceByPlayer)
-    .filter(([playerId, count]) => count > 0); // 0개는 버림
-
+    .filter(([_, count]) => count > 0);
   if (entries.length === 0) return;
 
-  // 각 플레이어의 주사위 개수 중 최대값 찾기
-  const maxCount = Math.max(...entries.map(([_, count]) => count));
+  // 3) 개수별로 묶기: { count: [playerId1, playerId2, ...] }
+  const byCount = {};
+  for (const [playerId, count] of entries) {
+    if (!byCount[count]) byCount[count] = [];
+    byCount[count].push(playerId);
+  }
 
-  // 최대값을 가진 애들 중, 동률(2명 이상)만 타겟
-  const tiedPlayers = entries.filter(([_, count]) => count === maxCount);
-  if (tiedPlayers.length <= 1) return; // 동률 아니면 끝
+  // 4) 그 중에서 "2명 이상"인 그룹 = 동률 그룹
+  const tiedIds = new Set();
+  Object.values(byCount).forEach((playerIdList) => {
+    if (playerIdList.length > 1) {
+      playerIdList.forEach((id) => tiedIds.add(id));
+    }
+  });
 
-  const tiedIds = new Set(tiedPlayers.map(([playerId]) => playerId));
+  // 동률이 하나도 없으면 끝
+  if (tiedIds.size === 0) return;
 
+  // 5) DOM에서 해당 카지노 주사위들 중, tiedIds에 포함된 플레이어의 주사위만 어둡게
   const diceArea = document.getElementById(`casino-dice-area-${casinoIndex}`);
   if (!diceArea) return;
 
-  // 해당 카지노에서 동률 플레이어의 주사위를 어둡게
   diceArea.querySelectorAll('.die').forEach((dieEl) => {
     const pid = dieEl.dataset.playerId;
     if (pid && tiedIds.has(pid)) {
