@@ -178,24 +178,28 @@ function updateCasinoDiceSummaries(casinosState) {
     const diceArea = document.getElementById(`casino-dice-area-${c.index}`);
     if (!summaryEl || !diceArea) return;
 
-    summaryEl.innerHTML = '';
+    if (summaryEl) {
+      summaryEl.innerHTML = '';
+    }
     diceArea.innerHTML = '';
 
     players.forEach((p) => {
       const count = c.diceByPlayer?.[p.id] || 0;
-      if (count > 0) {
-        const line = document.createElement('div');
-        const label = p.id === myId ? '나' : (p.name || `P${p.index}`);
-        line.textContent = `${label}: ${count}`;
-        summaryEl.appendChild(line);
-
-        for (let i = 0; i < count; i++) {
-          const cls = 'small-die color-' + (p.color || 'red');
-          const dieEl = createDie('', cls);
-          diceArea.appendChild(dieEl);
-        }
+      for (let i = 0; i < count; i++) {
+        const cls = 'small-die color-' + (p.color || 'red');
+        const dieEl = createDie('', cls);
+        diceArea.appendChild(dieEl);
       }
     });
+
+    // 중립 주사위도 아이콘만
+    const neutralCount = c.neutralCount || 0;
+    for (let i = 0; i < neutralCount; i++) {
+      const dieEl = createDie('', 'small-die neutral');
+      diceArea.appendChild(dieEl);
+    }
+  });
+}
 
     if (c.neutralCount > 0) {
       const line = document.createElement('div');
@@ -220,25 +224,30 @@ function updateRemainingDiceUI() {
 
   if (!me || !opp) return;
 
-  const myRemain =
-    (me.diceColorLeft ?? 0) + (me.diceNeutralLeft ?? 0);
-  const oppRemain =
-    (opp.diceColorLeft ?? 0) + (opp.diceNeutralLeft ?? 0);
+  function renderRemainingDice(container, player) {
+    const colorLeft = player.diceColorLeft ?? 0;
+    const neutralLeft = player.diceNeutralLeft ?? 0;
+
+    // 색 주사위들
+    for (let i = 0; i < colorLeft; i++) {
+      container.appendChild(
+        createDie('', 'color-' + (player.color || 'red')),
+      );
+    }
+    // 중립 주사위들 (흰색)
+    for (let i = 0; i < neutralLeft; i++) {
+      container.appendChild(
+        createDie('', 'neutral'),
+      );
+    }
+  }
 
   if (currentTurnId === myId) {
     // 내 턴 → 상대 남은 주사위
-    for (let i = 0; i < oppRemain; i++) {
-      opponentDiceRow.appendChild(
-        createDie('', 'color-' + (opp.color || 'blue')),
-      );
-    }
+    renderRemainingDice(opponentDiceRow, opp);
   } else {
     // 내 턴 아님 → 내 남은 주사위
-    for (let i = 0; i < myRemain; i++) {
-      myDiceRow.appendChild(
-        createDie('', 'color-' + (me.color || 'red')),
-      );
-    }
+    renderRemainingDice(myDiceRow, me);
   }
 }
 
