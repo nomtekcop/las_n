@@ -258,7 +258,75 @@
     14px 8px 0 0 #111,
     14px 16px 0 0 #111;
 }
-      
+/* ============================= */
+/*  작은 카지노 주사위용 눈 위치  */
+/* ============================= */
+
+/* 작은 주사위는 크기가 24x24라서 따로 맞춰줌 */
+.die.small-die::before {
+  content: '';
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: #111;
+}
+
+/* 1: 가운데 점 */
+.die.small-die.value-1::before {
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+/* 2: 왼쪽 위 + 오른쪽 아래 (살짝 위/왼쪽으로) */
+.die.small-die.value-2::before {
+  top: 4px;
+  left: 4px;
+  box-shadow: 12px 12px 0 0 #111;
+}
+
+/* 3: 왼쪽 위 + 가운데 + 오른쪽 아래 */
+.die.small-die.value-3::before {
+  top: 4px;
+  left: 4px;
+  box-shadow:
+    12px 12px 0 0 #111,  /* 오른쪽 아래 */
+    4px 4px 0 0 #111;    /* 가운데쯤 */
+}
+
+/* 4: 네 귀퉁이 */
+.die.small-die.value-4::before {
+  top: 4px;
+  left: 4px;
+  box-shadow:
+    12px 0 0 0 #111,     /* 오른쪽 위 */
+    0 12px 0 0 #111,     /* 왼쪽 아래 */
+    12px 12px 0 0 #111;  /* 오른쪽 아래 */
+}
+
+/* 5: 네 귀퉁이 + 가운데 */
+.die.small-die.value-5::before {
+  top: 4px;
+  left: 4px;
+  box-shadow:
+    12px 0 0 0 #111,
+    0 12px 0 0 #111,
+    12px 12px 0 0 #111,
+    4px 4px 0 0 #111;    /* 가운데 */
+}
+
+/* 6: 왼쪽 3개 + 오른쪽 3개 */
+.die.small-die.value-6::before {
+  top: 3px;
+  left: 4px;
+  box-shadow:
+    0 7px 0 0 #111,      /* 중간 왼쪽 */
+    0 14px 0 0 #111,     /* 아래 왼쪽 */
+    12px 0 0 0 #111,     /* 위 오른쪽 */
+    12px 7px 0 0 #111,   /* 중간 오른쪽 */
+    12px 14px 0 0 #111;  /* 아래 오른쪽 */
+}      
       .die.small-die {
         width: 24px;
         height: 24px;
@@ -435,12 +503,108 @@
         align-items: flex-end;
         font-size: 12px;
       }
+
+      
       .casino-money {
-        padding: 2px 6px;
-        border-radius: 4px;
-        border: 1px solid #bbb;
-        background: #fdfdfd;
-      }
+  padding: 3px 8px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  background: rgba(255, 255, 255, 0.95);
+  color: #111;
+  border: 1px solid rgba(0, 0, 0, 0.25);
+}
+
+/* 1만: 하늘색 */
+.casino-money.money-10000 {
+  background: #e0f7ff;
+  border-color: #7dd3fc;
+  color: #034152;
+}
+
+/* 2만: 주황색 */
+.casino-money.money-20000 {
+  background: #ffe8d1;
+  border-color: #f97316;
+  color: #7c2d12;
+}
+
+/* 3만: 연두색 */
+.casino-money.money-30000 {
+  background: #dcfce7;
+  border-color: #22c55e;
+  color: #14532d;
+}
+
+/* 4만: 분홍색 */
+.casino-money.money-40000 {
+  background: #ffe4f2;
+  border-color: #ec4899;
+  color: #831843;
+}
+
+/* 5만: 회색 */
+.casino-money.money-50000 {
+  background: #e5e7eb;
+  border-color: #9ca3af;
+  color: #111827;
+}
+
+/* 6만: 보라색 */
+.casino-money.money-60000 {
+  background: #ede9fe;
+  border-color: #8b5cf6;
+  color: #312e81;
+}
+
+/* 7만: 파란색 */
+.casino-money.money-70000 {
+  background: #e0f2fe;
+  border-color: #3b82f6;
+  color: #1e3a8a;
+}
+
+/* 8만: 노란색 */
+.casino-money.money-80000 {
+  background: #fef9c3;
+  border-color: #eab308;
+  color: #78350f;
+}
+
+/* 9만: 빨간색 */
+.casino-money.money-90000 {
+  background: #fee2e2;
+  border-color: #ef4444;
+  color: #7f1d1d;
+}
+/* 위쪽 상대 이름 칸 */
+#opponent-panel {
+  background: rgba(255, 255, 255, 0.92);
+  border-radius: 12px;
+  padding: 6px 10px;
+}
+
+/* 아래쪽 내 이름 칸 (안에 player-panel 하나 더 있어서 그쪽에 적용) */
+#bottom-player-area .player-panel {
+  background: rgba(255, 255, 255, 0.92);
+  border-radius: 12px;
+  padding: 6px 10px;
+}
+
+/* 가운데: 내 차례 / 굴리기 / 라운드 수 */
+#center-area {
+  background: rgba(255, 255, 255, 0.94);
+  border-radius: 12px;
+  padding: 8px 12px;
+}
+
+/* 로그 영역 카드 */
+#log-area {
+  background: rgba(255, 255, 255, 0.94);
+  border-radius: 12px;
+  padding: 6px 10px;
+  color: #333;
+}
 
       /* 내 정보 영역 */
       #bottom-player-area {
