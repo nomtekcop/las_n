@@ -544,6 +544,20 @@ function connectSocket() {
       socket.emit('setMaxRounds', v);
     }
   });
+
+restartBtn.addEventListener('click', () => {
+  gameOverPanel.classList.add('hidden');
+
+  if (!socket) return;
+
+  if (isHost) {
+    startGameBtn.disabled = true;
+    socket.emit('startGame');
+  } else {
+    addLog('호스트가 다시 시작하면 새 게임이 시작됩니다!');
+  }
+});
+
 }
 
 function updateTurnUI(currentPlayerId, currentPlayerName) {
