@@ -90,13 +90,6 @@ function createDie(value, cssClass) {
   return div;
 }
 
-  // 🎨 플레이어 색 주사위 (아직은 기존 div 방식)
-  const div = document.createElement('div');
-  div.className = 'die' + (cssClass ? ' ' + cssClass : '');
-  div.textContent = value;
-  return div;
-}
-
 // 굴린 주사위 표시 (숫자별로 모으는 애니메이션 느낌)
 function renderGroupedDiceRoll(dice, playerColor) {
   rolledDiceRow.innerHTML = '';
@@ -225,32 +218,34 @@ function animateRoundSetup(payload) {
 // 카지노 위 주사위 요약 + 실제 주사위 아이콘 표시
 function updateCasinoDiceSummaries(casinosState) {
   if (!casinosState) return;
+
   casinosState.forEach((c) => {
     const summaryEl = document.getElementById(`casino-dice-${c.index}`);
     const diceArea = document.getElementById(`casino-dice-area-${c.index}`);
     if (!summaryEl || !diceArea) return;
 
-    if (summaryEl) {
-      summaryEl.innerHTML = '';
-    }
+    summaryEl.innerHTML = '';
     diceArea.innerHTML = '';
 
+    // 플레이어 색 주사위들
     players.forEach((p) => {
-  const count = c.diceByPlayer?.[p.id] || 0;
-  for (let i = 0; i < count; i++) {
-    const cls = 'small-die color-' + (p.color || 'red');
-    // ✅ 카지노 번호(c.index)를 눈 값으로 넘겨서 점 찍기
-    const dieEl = createDie(c.index, cls);
-    diceArea.appendChild(dieEl);
-  }
-});
+      const count = c.diceByPlayer?.[p.id] || 0;
+      for (let i = 0; i < count; i++) {
+        const cls = 'small-die color-' + (p.color || 'red');
+        const dieEl = createDie(c.index, cls);   // 카지노 번호만큼 눈 표시
+        diceArea.appendChild(dieEl);
+      }
+    });
 
-// 중립 주사위도 같은 번호 눈으로 표시
-const neutralCount = c.neutralCount || 0;
-for (let i = 0; i < neutralCount; i++) {
-  const dieEl = createDie(c.index, 'small-die neutral');
-  diceArea.appendChild(dieEl);
+    // 중립 주사위들
+    const neutralCount = c.neutralCount || 0;
+    for (let i = 0; i < neutralCount; i++) {
+      const dieEl = createDie(c.index, 'small-die neutral');
+      diceArea.appendChild(dieEl);
+    }
+  });
 }
+
 
 
 // 남은 주사위 개수를 내/상대 프사 옆에 표시
@@ -281,7 +276,7 @@ function updateRemainingDiceUI() {
     }
   }
 
-  // ✅ 항상 둘 다 보여주기
+  // 항상 둘 다 보여주기
   renderRemainingDice(myDiceRow, me);
   renderRemainingDice(opponentDiceRow, opp);
 }
@@ -349,7 +344,8 @@ function connectSocket() {
     addLog('서버에 연결되었습니다.');
     // 확인용으로 콘솔에도 찍어봐도 좋음
     console.log('소켓 연결됨:', socket.id);
-
+ });
+  
   socket.on('awaitProfile', () => {
     socket.emit('registerProfile', {
       name: myProfile.name,
