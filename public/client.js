@@ -327,11 +327,16 @@ enterGameBtn.addEventListener('click', async () => {
 /* ---------- 소켓 & 게임 화면 ---------- */
 
 function connectSocket() {
+ if (socket && (socket.connected || socket.connecting)) {
+    return;
+  }
+
   socket = io();
 
   socket.on('connect', () => {
     addLog('서버에 연결되었습니다.');
-  });
+    // 확인용으로 콘솔에도 찍어봐도 좋음
+    console.log('소켓 연결됨:', socket.id);
 
   socket.on('awaitProfile', () => {
     socket.emit('registerProfile', {
