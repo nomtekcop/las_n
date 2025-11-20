@@ -148,7 +148,12 @@ function setupCasinosEmpty() {
 
     const header = document.createElement('div');
     header.className = 'casino-header';
-    // ❌ 더 이상 casino-die 안 만듦 (배경에 숫자 있으니까)
+
+    // ✅ 숫자 들어가는 작은 박스 생성
+    const label = document.createElement('div');
+    label.className = 'casino-die';
+    label.textContent = String(i);   // 1 ~ 6 숫자
+    header.appendChild(label);
 
     const summary = document.createElement('div');
     summary.className = 'casino-dice-summary';
