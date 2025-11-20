@@ -225,17 +225,23 @@ function endRound() {
     });
     broadcastGameStateBasic();
   } else {
-    currentRound += 1;
-    resetPlayersForNewRound();
-    setupCasinosForRound();
-    if (players.length > 0) {
-      currentTurn = players[0].id;
-      io.emit('turnChanged', {
-        currentPlayerId: currentTurn,
-        currentPlayerName: players[0].name,
-      });
-    }
-    broadcastGameStateBasic();
+    // 🔹 여기서 바로 다음 라운드로 넘어가지 말고,
+    //    돈 날아가는 애니메이션이 끝날 시간을 조금 준 다음에 진행
+    const ANIMATION_DELAY_MS = 3000; // 1.5초 정도. 필요하면 값 조절 가능
+
+    setTimeout(() => {
+      currentRound += 1;
+      resetPlayersForNewRound();
+      setupCasinosForRound();
+      if (players.length > 0) {
+        currentTurn = players[0].id;
+        io.emit('turnChanged', {
+          currentPlayerId: currentTurn,
+          currentPlayerName: players[0].name,
+        });
+      }
+      broadcastGameStateBasic();
+    }, ANIMATION_DELAY_MS);
   }
 }
 
