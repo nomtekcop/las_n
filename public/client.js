@@ -207,18 +207,6 @@ function updateCasinoDiceSummaries(casinosState) {
   });
 }
 
-    if (c.neutralCount > 0) {
-      const line = document.createElement('div');
-      line.textContent = `N: ${c.neutralCount}`;
-      summaryEl.appendChild(line);
-
-      for (let i = 0; i < c.neutralCount; i++) {
-        const dieEl = createDie('', 'small-die neutral');
-        diceArea.appendChild(dieEl);
-      }
-    }
-  });
-}
 
 // 남은 주사위 개수를 내/상대 프사 옆에 표시
 function updateRemainingDiceUI() {
@@ -471,7 +459,7 @@ function connectSocket() {
   });
 
   socket.on('payouts', (payouts) => {
-    payouts.forEach((p) => {
+    payouts.forEach((p, idx) => {
       addLog(
         `${p.casinoIndex}번 카지노: ${p.playerName} 이(가) ${p.amount.toLocaleString()} $ 획득!`,
       );
