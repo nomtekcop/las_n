@@ -264,32 +264,29 @@ function updateRemainingDiceUI() {
   if (!me || !opp) return;
 
   function renderRemainingDice(container, player) {
-  const colorLeft = player.diceColorLeft ?? 0;
-  const neutralLeft = player.diceNeutralLeft ?? 0;
+    const colorLeft = player.diceColorLeft ?? 0;
+    const neutralLeft = player.diceNeutralLeft ?? 0;
 
-  // 색 주사위들 → ? 표시
-  for (let i = 0; i < colorLeft; i++) {
-    container.appendChild(
-      createDie('?', 'color-' + (player.color || 'red')),
-    );
+    // 색 주사위들 → ? 표시
+    for (let i = 0; i < colorLeft; i++) {
+      container.appendChild(
+        createDie('?', 'color-' + (player.color || 'red')),
+      );
+    }
+    // 중립 주사위들 → ? 표시
+    for (let i = 0; i < neutralLeft; i++) {
+      container.appendChild(
+        createDie('?', 'neutral'),
+      );
+    }
   }
-  // 중립 주사위들 → ? 표시
-  for (let i = 0; i < neutralLeft; i++) {
-    container.appendChild(
-      createDie('?', 'neutral'),
-    );
-  }
+
+  // ✅ 항상 둘 다 보여주기
+  renderRemainingDice(myDiceRow, me);
+  renderRemainingDice(opponentDiceRow, opp);
 }
 
-  if (currentTurnId === myId) {
-    // 내 턴 → 상대 남은 주사위
-    renderRemainingDice(opponentDiceRow, opp);
-  } else {
-    // 내 턴 아님 → 내 남은 주사위
-    renderRemainingDice(myDiceRow, me);
-  }
-}
-
+    
 // 아바타 dataURL 읽기
 function readAvatarFile(file) {
   return new Promise((resolve) => {
@@ -578,6 +575,7 @@ function connectSocket() {
 
   rollBtn.addEventListener('click', () => {
     if (!socket) return;
+    myDiceRow.innerHTML = '';
     socket.emit('rollDice');
   });
 
