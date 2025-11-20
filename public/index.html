@@ -186,8 +186,79 @@
         justify-content: center;
         font-size: 16px;
         background: #fff;
+        position: relative; 
       }
+      
+      /* 주사위 눈 공통 스타일 */
+.die.value-1::before,
+.die.value-2::before,
+.die.value-3::before,
+.die.value-4::before,
+.die.value-5::before,
+.die.value-6::before {
+  content: '';
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #111;  /* 점 색깔 */
+}
+/* 1: 가운데 점 하나 */
+.die.value-1::before {
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
 
+/* 2: 왼쪽 위 + 오른쪽 아래 */
+.die.value-2::before {
+  top: 8px;
+  left: 8px;
+  box-shadow: 16px 16px 0 0 #111;
+}
+
+/* 3: 왼쪽 위 + 가운데 + 오른쪽 아래 */
+.die.value-3::before {
+  top: 8px;
+  left: 8px;
+  box-shadow:
+    16px 16px 0 0 #111,  /* 오른쪽 아래 */
+    8px 8px 0 0 #111;    /* 가운데(대략) */
+}
+
+/* 4: 네 귀퉁이 */
+.die.value-4::before {
+  top: 8px;
+  left: 8px;
+  box-shadow:
+    16px 0 0 0 #111,     /* 오른쪽 위 */
+    0 16px 0 0 #111,     /* 왼쪽 아래 */
+    16px 16px 0 0 #111;  /* 오른쪽 아래 */
+}
+
+/* 5: 네 귀퉁이 + 가운데 */
+.die.value-5::before {
+  top: 8px;
+  left: 8px;
+  box-shadow:
+    16px 0 0 0 #111,     /* 오른쪽 위 */
+    0 16px 0 0 #111,     /* 왼쪽 아래 */
+    16px 16px 0 0 #111,  /* 오른쪽 아래 */
+    8px 8px 0 0 #111;    /* 가운데 */
+}
+
+/* 6: 왼쪽 3개 + 오른쪽 3개 (세로 3줄) */
+.die.value-6::before {
+  top: 6px;
+  left: 8px;
+  box-shadow:
+    0 10px 0 0 #111,     /* 중간 왼쪽 */
+    0 20px 0 0 #111,     /* 아래 왼쪽 */
+    16px 0 0 0 #111,     /* 위 오른쪽 */
+    16px 10px 0 0 #111,  /* 중간 오른쪽 */
+    16px 20px 0 0 #111;  /* 아래 오른쪽 */
+}
+      
       .die.small-die {
         width: 24px;
         height: 24px;
