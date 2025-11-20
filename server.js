@@ -321,6 +321,13 @@ io.on('connection', (socket) => {
     if (gameStarted) return;
     if (players.length < 2) return;
     if (socket.id !== players[0].id) return;
+    
+    players.forEach((p) => {
+      p.money = 0;
+      p.diceColorLeft = 8;
+      p.diceNeutralLeft = 4;
+      p.pendingRoll = null;
+    });
 
     gameStarted = true;
     currentRound = 1;
