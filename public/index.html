@@ -68,7 +68,38 @@
         height: 100%;
         object-fit: cover;
       }
-      
+      /* 공통 버튼 효과 - 부드러운 애니메이션 */
+#enter-game-btn,
+#roll-btn,
+#start-game-btn,
+.choice-btn,
+.game-over-restart-btn {
+  transition:
+    transform 0.06s ease,
+    box-shadow 0.06s ease,
+    filter 0.06s ease;
+}
+
+/* 마우스를 올렸을 때 살짝 떠오르는 느낌 */
+#enter-game-btn:hover,
+#roll-btn:hover,
+#start-game-btn:hover,
+.choice-btn:hover,
+.game-over-restart-btn:hover {
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+  filter: brightness(1.03);
+}
+
+/* 클릭(누르는 순간) 했을 때 꾹 눌리는 느낌 */
+#enter-game-btn:active,
+#roll-btn:active,
+#start-game-btn:active,
+.choice-btn:active,
+.game-over-restart-btn:active {
+  transform: translateY(1px) scale(0.97);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+  filter: brightness(0.96);
+}
       #enter-game-btn {
         margin-top: 20px;
         width: 100%;
