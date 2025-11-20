@@ -68,6 +68,7 @@
         height: 100%;
         object-fit: cover;
       }
+      
       #enter-game-btn {
         margin-top: 20px;
         width: 100%;
@@ -141,7 +142,13 @@
         font-size: 14px;
         color: #555;
       }
-
+      .animating-money {
+        position: fixed;
+        z-index: 999;
+        pointer-events: none;
+        transition: top 0.5s ease, left 0.5s ease,
+          opacity 0.5s ease, transform 0.5s ease;
+      }
       #center-area {
         display: flex;
         flex-direction: column;
@@ -324,6 +331,44 @@
         display: flex;
         gap: 2px;
       }
+            #game-over-panel {
+        margin-top: 8px;
+      }
+
+      .game-over-card {
+        border-radius: 12px;
+        border: 1px solid #ccc;
+        padding: 10px 12px;
+        background: #fffbe8;
+        font-size: 13px;
+      }
+
+      .game-over-title {
+        font-weight: 700;
+        margin-bottom: 4px;
+      }
+
+      .game-over-list {
+        margin-bottom: 8px;
+      }
+
+      .game-over-row {
+        margin: 2px 0;
+      }
+
+      .game-over-row.winner {
+        color: #d47b00;
+        font-weight: 700;
+      }
+
+      .game-over-restart-btn {
+        padding: 4px 10px;
+        font-size: 12px;
+        border-radius: 8px;
+        border: 1px solid #aaa;
+        background: #f0f0f0;
+        cursor: pointer;
+      }
 
       #log-area {
         font-size: 12px;
@@ -413,6 +458,19 @@
             <div id="my-money" class="player-money">0 $</div>
           </div>
           <div id="my-dice-row"></div>
+        </div>
+      </div>
+      <div id="game-over-panel" class="hidden">
+        <div class="game-over-card">
+          <div id="game-over-title" class="game-over-title">
+            게임 종료
+          </div>
+          <div id="game-over-list" class="game-over-list">
+            <!-- 등수 리스트 들어갈 자리 -->
+          </div>
+          <button id="restart-btn" class="game-over-restart-btn">
+            다시 하기
+          </button>
         </div>
       </div>
 
