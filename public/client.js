@@ -249,22 +249,22 @@ function updateRemainingDiceUI() {
   if (!me || !opp) return;
 
   function renderRemainingDice(container, player) {
-    const colorLeft = player.diceColorLeft ?? 0;
-    const neutralLeft = player.diceNeutralLeft ?? 0;
+  const colorLeft = player.diceColorLeft ?? 0;
+  const neutralLeft = player.diceNeutralLeft ?? 0;
 
-    // 색 주사위들
-    for (let i = 0; i < colorLeft; i++) {
-      container.appendChild(
-        createDie('', 'color-' + (player.color || 'red')),
-      );
-    }
-    // 중립 주사위들 (흰색)
-    for (let i = 0; i < neutralLeft; i++) {
-      container.appendChild(
-        createDie('', 'neutral'),
-      );
-    }
+  // 색 주사위들 → ? 표시
+  for (let i = 0; i < colorLeft; i++) {
+    container.appendChild(
+      createDie('?', 'color-' + (player.color || 'red')),
+    );
   }
+  // 중립 주사위들 → ? 표시
+  for (let i = 0; i < neutralLeft; i++) {
+    container.appendChild(
+      createDie('?', 'neutral'),
+    );
+  }
+}
 
   if (currentTurnId === myId) {
     // 내 턴 → 상대 남은 주사위
