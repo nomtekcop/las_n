@@ -133,7 +133,13 @@
         height: 100%;
         object-fit: cover;
       }
-
+.avatar-img {
+  border-radius: 50%;
+  border: 3px solid #ccc; /* 기본 회색, JS에서 색 바꿔줌 */
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
       .player-name {
         font-weight: 600;
         margin-bottom: 4px;
@@ -415,7 +421,7 @@
       <div id="top-player-area">
         <div id="opponent-panel" class="player-panel">
           <div class="avatar-circle">
-            <img id="opponent-avatar" alt="" />
+            <img id="opponent-avatar" class="avatar-img" alt="" />
           </div>
           <div>
             <div id="opponent-name" class="player-name">상대 플레이어</div>
@@ -451,7 +457,7 @@
       <div id="bottom-player-area">
         <div class="player-panel">
           <div class="avatar-circle">
-            <img id="my-avatar" alt="" />
+            <img id="my-avatar" class="avatar-img" alt="" />
           </div>
           <div>
             <div id="my-name" class="player-name">나</div>
