@@ -148,12 +148,7 @@ function setupCasinosEmpty() {
 
     const header = document.createElement('div');
     header.className = 'casino-header';
-
-    const die = document.createElement('div');
-    die.className = 'casino-die';
-    die.textContent = i;
-
-    header.appendChild(die);
+    // ❌ 더 이상 casino-die 안 만듦 (배경에 숫자 있으니까)
 
     const summary = document.createElement('div');
     summary.className = 'casino-dice-summary';
