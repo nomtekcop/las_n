@@ -383,17 +383,23 @@ function connectSocket() {
   });
 
   socket.on('gameStarted', ({ round, maxRounds }) => {
-    gameStarted = true;
-    startGameBtn.disabled = true;
-    startGameBtn.classList.add('hidden');
-    roundCountSelect.disabled = true;
-    if (maxRounds) {
-      currentMaxRounds = maxRounds;
-      roundCountSelect.value = String(maxRounds);
-    }
-    roundNumberSpan.textContent = String(round);
-    addLog(`게임 시작! ROUND ${round} / ${currentMaxRounds}`);
-  });
+  gameStarted = true;
+
+  // ✅ 새 게임 시작할 때 모든 사람 화면에서 점수판 숨기기
+  if (typeof gameOverPanel !== 'undefined' && gameOverPanel) {
+    gameOverPanel.classList.add('hidden');
+  }
+
+  startGameBtn.disabled = true;
+  startGameBtn.classList.add('hidden');
+  roundCountSelect.disabled = true;
+  if (maxRounds) {
+    currentMaxRounds = maxRounds;
+    roundCountSelect.value = String(maxRounds);
+  }
+  roundNumberSpan.textContent = String(round);
+  addLog(`게임 시작! ROUND ${round} / ${currentMaxRounds}`);
+});
 
   socket.on('roundSetup', (payload) => {
     animateRoundSetup(payload);
