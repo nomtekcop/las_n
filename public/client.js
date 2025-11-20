@@ -77,11 +77,6 @@ function renderGroupedDiceRoll(dice, playerColor) {
     bucket.style.alignItems = 'center';
     bucket.style.margin = '0 4px';
 
-    const label = document.createElement('div');
-    label.style.fontSize = '10px';
-    label.textContent = v;
-    bucket.appendChild(label);
-
     const stack = document.createElement('div');
     stack.style.display = 'flex';
     stack.style.flexWrap = 'wrap';
