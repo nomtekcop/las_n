@@ -12,11 +12,11 @@
         padding: 0;
         font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI',
           sans-serif;
-        background: #f7f7f7;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        min-height: 100vh;
+        background: url('bg-main.png') center center / cover no-repeat fixed;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
       }
       .hidden {
         display: none;
@@ -87,17 +87,17 @@
 
       /* 게임 화면 */
       #game-screen {
-        width: 100%;
-        max-width: 1200px;
-        height: 90vh;
-        background: #ffffff;
-        border-radius: 16px;
-        border: 1px solid #ddd;
-        padding: 16px 24px 24px;
-        display: flex;
-        flex-direction: column;
-        gap: 12px;
-      }
+  width: 100%;
+  max-width: 1200px;
+  height: 90vh;
+  background: url('bg-board.png') center center / cover no-repeat;
+  border-radius: 16px;
+  border: 1px solid #ddd;
+  padding: 16px 24px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
 
       #round-header {
         font-size: 24px;
@@ -357,14 +357,38 @@
         gap: 8px;
         flex: 1;
       }
-      .casino {
-        border: 1px solid #ccc;
-        border-radius: 16px 16px 8px 8px;
-        padding: 8px;
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
-      }
+      /* 6개 카지노 배경 이미지 */
+.casino {
+  border: 1px solid #ccc;
+  border-radius: 16px 16px 8px 8px;
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+/* 1~6번 카지노 각각 다른 배경 */
+.casino:nth-child(1) {
+  background-image: url('casino-1.png');
+}
+.casino:nth-child(2) {
+  background-image: url('casino-2.png');
+}
+.casino:nth-child(3) {
+  background-image: url('casino-3.png');
+}
+.casino:nth-child(4) {
+  background-image: url('casino-4.png');
+}
+.casino:nth-child(5) {
+  background-image: url('casino-5.png');
+}
+.casino:nth-child(6) {
+  background-image: url('casino-6.png');
+}
       .casino-header {
         display: flex;
         justify-content: center;
