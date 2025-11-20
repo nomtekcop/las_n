@@ -527,6 +527,11 @@
         gap: 2px;
         margin-bottom: 4px;
       }
+      .die.muted-die {
+  opacity: 0.35;      /* 투명도 낮추기 */
+  filter: grayscale(1);
+  transform: scale(0.95);  /* 살짝 줄여서 뉘앙스 */
+}
       .casino-money-list {
         display: flex;
         flex-direction: column;
@@ -608,12 +613,6 @@
   border-color: #ef4444;
   color: #7f1d1d;
 }
-
-.die.muted-die {
-  opacity: 0.35;
-  filter: grayscale(0.7);
-}
-
       
 /* 위쪽 상대 이름 칸 */
 #opponent-panel {
