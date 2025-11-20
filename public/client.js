@@ -61,7 +61,7 @@ let gameStarted = false;
 let currentMaxRounds = 4;
 let payoutQueue = [];
 let isProcessingPayouts = false;
-
+let latestCasinosState = [];
 
 // 로그 출력
 function addLog(text) {
@@ -233,6 +233,7 @@ function updateCasinoDiceSummaries(casinosState) {
       for (let i = 0; i < count; i++) {
         const cls = 'small-die color-' + (p.color || 'red');
         const dieEl = createDie(c.index, cls);   // 카지노 번호만큼 눈 표시
+        dieEl.dataset.playerId = p.id;         // 🔹 이 줄 추가
         diceArea.appendChild(dieEl);
       }
     });
@@ -462,6 +463,9 @@ function connectSocket() {
       }
     });
 
+ // 🔹 최신 카지노 상태 저장
+  latestCasinosState = state.casinos || [];
+    
     updateCasinoDiceSummaries(state.casinos || []);
     updateRemainingDiceUI();
   });
@@ -627,6 +631,40 @@ function updateAvatarBorders() {
   }
 }
 
+
+function darkenTiedDiceForCasino(casinoIndex) {
+  if (!latestCasinosState || latestCasinosState.length === 0) return;
+
+  const casino = latestCasinosState.find((c) => c.index === casinoIndex);
+  if (!casino || !casino.diceByPlayer) return;
+
+  const entries = Object.entries(casino.diceByPlayer)
+    .filter(([playerId, count]) => count > 0); // 0개는 버림
+
+  if (entries.length === 0) return;
+
+  // 각 플레이어의 주사위 개수 중 최대값 찾기
+  const maxCount = Math.max(...entries.map(([_, count]) => count));
+
+  // 최대값을 가진 애들 중, 동률(2명 이상)만 타겟
+  const tiedPlayers = entries.filter(([_, count]) => count === maxCount);
+  if (tiedPlayers.length <= 1) return; // 동률 아니면 끝
+
+  const tiedIds = new Set(tiedPlayers.map(([playerId]) => playerId));
+
+  const diceArea = document.getElementById(`casino-dice-area-${casinoIndex}`);
+  if (!diceArea) return;
+
+  // 해당 카지노에서 동률 플레이어의 주사위를 어둡게
+  diceArea.querySelectorAll('.die').forEach((dieEl) => {
+    const pid = dieEl.dataset.playerId;
+    if (pid && tiedIds.has(pid)) {
+      dieEl.classList.add('muted-die');
+    }
+  });
+}
+
+
 function animatePayout(payout, index) {
   const { casinoIndex, playerName, amount } = payout;
 
@@ -713,7 +751,17 @@ function processNextPayoutBatch() {
 
   // 큐에서 맨 앞(가장 먼저 온 카지노) 꺼내기
   const payouts = payoutQueue.shift();
+ if (!payouts || payouts.length === 0) {
+    // 비어 있으면 바로 다음
+    setTimeout(processNextPayoutBatch, 0);
+    return;
+  }
 
+  // 🔹 여기서 이 batch가 어떤 카지노인지 알아내기
+  const casinoIndex = payouts[0].casinoIndex;
+  if (casinoIndex != null) {
+    darkenTiedDiceForCasino(casinoIndex);
+  }
   // 혹시 몰라서, 이 카지노 안에서도 큰 돈부터 정렬
   const sorted = [...payouts].sort((a, b) => b.amount - a.amount);
 
