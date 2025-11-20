@@ -22,6 +22,11 @@ const myMoneySpan = document.getElementById('my-money');
 const myAvatarImg = document.getElementById('my-avatar');
 const myDiceRow = document.getElementById('my-dice-row');
 
+const gameOverPanel = document.getElementById('game-over-panel');
+const gameOverTitle = document.getElementById('game-over-title');
+const gameOverList = document.getElementById('game-over-list');
+const restartBtn = document.getElementById('restart-btn');
+
 const turnIndicator = document.getElementById('turn-indicator');
 const rolledDiceRow = document.getElementById('rolled-dice-row');
 const rollBtn = document.getElementById('roll-btn');
@@ -30,6 +35,7 @@ const choiceRow = document.getElementById('choice-row');
 const casinoRow = document.getElementById('casino-row');
 const logArea = document.getElementById('log-area');
 const roundCountSelect = document.getElementById('round-count-select');
+
 
 let socket = null;
 let myId = null;
@@ -463,20 +469,49 @@ function connectSocket() {
       addLog(
         `${p.casinoIndex}번 카지노: ${p.playerName} 이(가) ${p.amount.toLocaleString()} $ 획득!`,
       );
+      animatePayout(p, idx); // 💸 여기서 애니메이션
     });
   });
 
   socket.on('gameOver', ({ players: finalPlayers, winnerId, winnerName, maxRounds }) => {
-    gameStarted = false;
-    let msg = `게임 종료! (총 ${maxRounds || currentMaxRounds}라운드)\n`;
-    finalPlayers.forEach((p) => {
-      msg += `${p.name}: ${p.money.toLocaleString()} $\n`;
-    });
-    if (winnerId) {
-      msg += `우승: ${winnerName}`;
+  gameStarted = false;
+
+  const rounds = maxRounds || currentMaxRounds;
+  gameOverTitle.textContent = `게임 종료 (총 ${rounds}라운드)`;
+
+  // money 기준으로 순위 정렬
+  const sorted = [...finalPlayers].sort(
+    (a, b) => (b.money ?? 0) - (a.money ?? 0),
+  );
+
+  gameOverList.innerHTML = '';
+
+  sorted.forEach((p, idx) => {
+    const row = document.createElement('div');
+    row.className = 'game-over-row';
+    row.textContent = `${idx + 1}위 - ${p.name}: ${(p.money ?? 0).toLocaleString()} $`;
+    if (p.id === winnerId) {
+      row.classList.add('winner');
     }
-    alert(msg);
+    gameOverList.appendChild(row);
   });
+
+  // 호스트는 다시 시작 가능, 게스트는 읽기만
+  if (isHost) {
+    restartBtn.disabled = false;
+    restartBtn.textContent = '같은 인원으로 다시 하기';
+  } else {
+    restartBtn.disabled = true;
+    restartBtn.textContent = '호스트가 다시 시작할 때까지 대기 중';
+  }
+
+  // 다시 시작 버튼(위에 있는 기존 버튼)도 재활성화
+  if (isHost) {
+    startGameBtn.disabled = false;
+  }
+
+  gameOverPanel.classList.remove('hidden');
+});
 
   socket.on('notYourTurn', () => {
     addLog('⚠ 아직 네 턴이 아니야!');
@@ -524,6 +559,69 @@ function updateTurnUI(currentPlayerId, currentPlayerName) {
     rollBtn.disabled = true;
   }
 }
+function animatePayout(payout, index) {
+  const { casinoIndex, playerName, amount } = payout;
+
+  // 돈이 있는 카지노 영역 (지금 돈 리스트 뜨는 div)
+  const moneyList = document.getElementById(`casino-money-${casinoIndex}`);
+  if (!moneyList) return;
+
+  const sourceRect = moneyList.getBoundingClientRect();
+
+  // 날아가는 돈 DOM
+  const moneyEl = document.createElement('div');
+  moneyEl.className = 'casino-money animating-money';
+  moneyEl.textContent = amount.toLocaleString() + ' $';
+
+  // 시작 위치: 해당 카지노 돈 영역 가운데
+  const startX = sourceRect.left + sourceRect.width / 2;
+  const startY = sourceRect.top + sourceRect.height / 2;
+  moneyEl.style.left = startX + 'px';
+  moneyEl.style.top = startY + 'px';
+
+  document.body.appendChild(moneyEl);
+
+  // 도착 위치 계산 (기본값: 위로 살짝 날려서 사라지는 느낌)
+  let targetX = startX;
+  let targetY = sourceRect.top - 40;
+
+  let targetElem = null;
+  if (playerName !== '중립') {
+    if (myNameSpan.textContent === playerName) {
+      targetElem = myMoneySpan;
+    } else if (opponentNameSpan.textContent === playerName) {
+      targetElem = opponentMoneySpan;
+    }
+  }
+
+  // 실제 플레이어에게 가는 경우: 그 플레이어 돈 위치로
+  if (targetElem) {
+    const targetRect = targetElem.getBoundingClientRect();
+    targetX = targetRect.left + targetRect.width / 2;
+    targetY = targetRect.top + targetRect.height / 2;
+  }
+
+  // 여러 개 나올 때 조금씩 순차적으로 날아가도록 delay
+  const delay = 80 * (index ?? 0);
+
+  setTimeout(() => {
+    moneyEl.style.left = targetX + 'px';
+    moneyEl.style.top = targetY + 'px';
+    moneyEl.style.transform = 'scale(0.8)';
+    moneyEl.style.opacity = '0';
+  }, 30 + delay);
+
+  setTimeout(() => {
+    if (moneyEl.parentNode) {
+      moneyEl.parentNode.removeChild(moneyEl);
+    }
+  }, 650 + delay);
+}
+
+
+
+
+
 
 // 선택한 카지노로 주사위 이동 애니메이션
 function animateDiceToCasino(playerId, casinoIndex, colorCount, neutralCount) {
