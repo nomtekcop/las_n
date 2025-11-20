@@ -49,6 +49,9 @@ let currentTurnId = null;
 let isHost = false;
 let gameStarted = false;
 let currentMaxRounds = 4;
+let payoutQueue = [];
+let isProcessingPayouts = false;
+
 
 // 로그 출력
 function addLog(text) {
@@ -459,13 +462,13 @@ function connectSocket() {
   });
 
   socket.on('payouts', (payouts) => {
-    payouts.forEach((p, idx) => {
-      addLog(
-        `${p.casinoIndex}번 카지노: ${p.playerName} 이(가) ${p.amount.toLocaleString()} $ 획득!`,
-      );
-      animatePayout(p, idx); // 💸 여기서 애니메이션
-    });
-  });
+  // 서버에서 카지노별로 한 번씩 보내주는 payouts 배열을
+  // 큐에 차례대로 쌓아둠 (1번 카지노, 2번 카지노, ...)
+  payoutQueue.push(payouts);
+  if (!isProcessingPayouts) {
+    processNextPayoutBatch();
+  }
+});
 
   socket.on('gameOver', ({ players: finalPlayers, winnerId, winnerName, maxRounds }) => {
   gameStarted = false;
@@ -567,6 +570,7 @@ function updateTurnUI(currentPlayerId, currentPlayerName) {
     rollBtn.disabled = true;
   }
 }
+
 function animatePayout(payout, index) {
   const { casinoIndex, playerName, amount } = payout;
 
@@ -626,7 +630,38 @@ function animatePayout(payout, index) {
   }, 650 + delay);
 }
 
+function processNextPayoutBatch() {
+  if (payoutQueue.length === 0) {
+    isProcessingPayouts = false;
+    return;
+  }
 
+  isProcessingPayouts = true;
+
+  // 큐에서 맨 앞(가장 먼저 온 카지노) 꺼내기
+  const payouts = payoutQueue.shift();
+
+  // 혹시 몰라서, 이 카지노 안에서도 큰 돈부터 정렬
+  const sorted = [...payouts].sort((a, b) => b.amount - a.amount);
+
+  sorted.forEach((p, idx) => {
+    addLog(
+      `${p.casinoIndex}번 카지노: ${p.playerName} 이(가) ${p.amount.toLocaleString()} $ 획득!`,
+    );
+    // idx를 넘겨서 안에서 delay 줄 수 있게
+    animatePayout(p, idx);
+  });
+
+  // 이 batch 애니메이션이 끝날 때쯤 다음 카지노 처리
+  // animatePayout 내부에서 한 장당 최대 ~650ms + idx*80ms 정도 쓰니까
+  const perOneMs = 650;
+  const gapMs = 80;
+  const totalMs = perOneMs + gapMs * (sorted.length + 1);
+
+  setTimeout(() => {
+    processNextPayoutBatch();
+  }, totalMs);
+}
 
 
 
