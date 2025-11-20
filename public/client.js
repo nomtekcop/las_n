@@ -36,6 +36,16 @@ const casinoRow = document.getElementById('casino-row');
 const logArea = document.getElementById('log-area');
 const roundCountSelect = document.getElementById('round-count-select');
 
+const avatarColorMap = {
+  red: '#ff7675',
+  blue: '#74b9ff',
+  green: '#55efc4',
+  yellow: '#ffeaa7',
+  purple: '#a29bfe',
+  pink: '#fd79a8',
+  black: '#636e72',
+};
+
 
 let socket = null;
 let myId = null;
@@ -347,6 +357,7 @@ function connectSocket() {
       opponentMoneySpan.textContent = '0 $';
       opponentAvatarImg.removeAttribute('src');
     }
+    updateAvatarBorders();
   });
 
   socket.on('readyToStart', ({ hostId, maxRounds }) => {
@@ -571,21 +582,52 @@ function updateTurnUI(currentPlayerId, currentPlayerName) {
   }
 }
 
+function updateAvatarBorders() {
+  const me = players.find((p) => p.id === myId);
+  const opp = players.find((p) => p.id !== myId);
+
+  if (me && myAvatarImg) {
+    const c = avatarColorMap[me.color] || '#333333';
+    myAvatarImg.style.borderColor = c;
+  }
+  if (opp && opponentAvatarImg) {
+    const c = avatarColorMap[opp.color] || '#333333';
+    opponentAvatarImg.style.borderColor = c;
+  }
+}
+
 function animatePayout(payout, index) {
   const { casinoIndex, playerName, amount } = payout;
 
-  // 돈이 있는 카지노 영역 (지금 돈 리스트 뜨는 div)
   const moneyList = document.getElementById(`casino-money-${casinoIndex}`);
   if (!moneyList) return;
 
-  const sourceRect = moneyList.getBoundingClientRect();
+  const formatted = amount.toLocaleString() + ' $';
 
-  // 날아가는 돈 DOM
-  const moneyEl = document.createElement('div');
-  moneyEl.className = 'casino-money animating-money';
-  moneyEl.textContent = amount.toLocaleString() + ' $';
+  // 1) 카지노 안에서 이 금액과 같은 지폐 하나 찾기
+  let sourceNote = null;
+  const notes = Array.from(
+    moneyList.getElementsByClassName('casino-money'),
+  );
+  sourceNote = notes.find(
+    (el) => el.textContent.trim() === formatted,
+  );
 
-  // 시작 위치: 해당 카지노 돈 영역 가운데
+  // 못 찾으면 그냥 첫 번째 지폐라도 사용
+  if (!sourceNote && notes.length > 0) {
+    sourceNote = notes[notes.length - 1];
+  }
+  if (!sourceNote) return;
+
+  const sourceRect = sourceNote.getBoundingClientRect();
+
+  // 2) 원본 지폐는 카지노에서 제거 (이 순간부터 화면에서 사라짐)
+  moneyList.removeChild(sourceNote);
+
+  // 3) 화면에 날릴 지폐 하나 새로 만들어서 같은 위치에서 시작
+  const moneyEl = sourceNote.cloneNode(true);
+  moneyEl.classList.add('animating-money');
+
   const startX = sourceRect.left + sourceRect.width / 2;
   const startY = sourceRect.top + sourceRect.height / 2;
   moneyEl.style.left = startX + 'px';
@@ -593,7 +635,7 @@ function animatePayout(payout, index) {
 
   document.body.appendChild(moneyEl);
 
-  // 도착 위치 계산 (기본값: 위로 살짝 날려서 사라지는 느낌)
+  // 도착 위치 계산 (기본값: 위로 살짝)
   let targetX = startX;
   let targetY = sourceRect.top - 40;
 
@@ -606,14 +648,13 @@ function animatePayout(payout, index) {
     }
   }
 
-  // 실제 플레이어에게 가는 경우: 그 플레이어 돈 위치로
   if (targetElem) {
     const targetRect = targetElem.getBoundingClientRect();
     targetX = targetRect.left + targetRect.width / 2;
     targetY = targetRect.top + targetRect.height / 2;
   }
 
-  // 여러 개 나올 때 조금씩 순차적으로 날아가도록 delay
+  // 같은 카지노 안에서도 한 장씩 순차적으로 날리기 위한 딜레이
   const delay = 80 * (index ?? 0);
 
   setTimeout(() => {
@@ -629,6 +670,7 @@ function animatePayout(payout, index) {
     }
   }, 650 + delay);
 }
+
 
 function processNextPayoutBatch() {
   if (payoutQueue.length === 0) {
