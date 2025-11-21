@@ -231,11 +231,19 @@
         transition: top 0.5s ease, left 0.5s ease,
           opacity 0.5s ease, transform 0.5s ease;
       }
-      #center-area {
+      
+/* 가운데: 내 차례 / 굴리기 / 라운드 수 박스 */
+#center-area {
   display: flex;
   flex-direction: column;
-  align-items: stretch;  /* 전체 너비로 늘리기 */
+  align-items: center;      /* 가로 가운데 정렬 */
+  justify-content: flex-start;
   gap: 8px;
+  text-align: center;       /* 글자도 가운데 정렬 */
+
+  background: rgba(255, 255, 255, 0.94);
+  border-radius: 12px;
+  padding: 8px 12px;
 }
 
       #turn-indicator {
@@ -715,12 +723,6 @@
   padding: 6px 10px;
 }
 
-/* 가운데: 내 차례 / 굴리기 / 라운드 수 */
-#center-area {
-  background: rgba(255, 255, 255, 0.94);
-  border-radius: 12px;
-  padding: 8px 12px;
-}
 
 /* 로그 영역 카드 */
 #log-area {
