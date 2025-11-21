@@ -110,7 +110,7 @@ function renderOpponentPanels() {
   // 컨테이너 스타일: 여러 명 가로로 배치
   topPlayerArea.style.display = 'flex';
   topPlayerArea.style.justifyContent = 'center';
-  topPlayerArea.style.gap = '12px';
+  topPlayerArea.style.gap = '24px';
 
   others.forEach((p) => {
     const panel = document.createElement('div');
@@ -221,19 +221,7 @@ function setupCasinosEmpty() {
     label.className = 'casino-die';
     label.textContent = String(i);
     header.appendChild(label);
-
-    // 🔥 슬롯별 베팅 버튼 (추가된 부분)
-    const betBtn = document.createElement('button');
-    betBtn.className = 'bet-btn hidden';
-    betBtn.textContent = '이 슬롯에 배팅';
-    betBtn.dataset.casinoIndex = i;
-    betBtn.addEventListener('click', () => {
-      if (!socket) return;
-      socket.emit('chooseBetValue', i);
-      hideAllBetButtons();
-      rollBtn.disabled = true;
-    });
-
+   
     // 주사위 요약
     const summary = document.createElement('div');
     summary.className = 'casino-dice-summary';
@@ -251,12 +239,36 @@ function setupCasinosEmpty() {
 
     // 🔽 구성 요소 추가 순서
     casino.appendChild(header);
-    casino.appendChild(betBtn);     // 🔥 슬롯 상단에 베팅 버튼
     casino.appendChild(summary);
     casino.appendChild(diceArea);
     casino.appendChild(moneyList);
 
     casinoRow.appendChild(casino);
+  }
+}
+
+// 굴린 주사위 아래에 1~6 슬롯용 베팅 버튼 6개 깔기
+function setupBetButtonsRow() {
+  if (!choiceRow) return;
+  choiceRow.innerHTML = '';
+
+  for (let i = 1; i <= 6; i++) {
+    const cell = document.createElement('div');
+    cell.className = 'choice-cell';
+
+    const betBtn = document.createElement('button');
+    betBtn.className = 'bet-btn hidden';
+    betBtn.textContent = '이 슬롯에 배팅';
+    betBtn.dataset.casinoIndex = i;
+    betBtn.addEventListener('click', () => {
+      if (!socket) return;
+      socket.emit('chooseBetValue', i);
+      hideAllBetButtons();
+      rollBtn.disabled = true;
+    });
+
+    cell.appendChild(betBtn);
+    choiceRow.appendChild(cell);
   }
 }
 
@@ -449,6 +461,7 @@ enterGameBtn.addEventListener('click', async () => {
   profileScreen.classList.add('hidden');
   gameScreen.classList.remove('hidden');
   setupCasinosEmpty();
+  setupBetButtonsRow();   // ✅ 굴린 주사위 아래 베팅 버튼 줄 세팅
   connectSocket();
   play(bgm);
 bgm.volume = 0.4; // 볼륨 적당하게
@@ -620,8 +633,6 @@ function connectSocket() {
     addLog(`${rollerName}가 주사위를 굴렸습니다. (${dice.length}개)`);
 
     renderGroupedDiceRoll(dice, rollerColor);
-
-    choiceRow.innerHTML = ''; // 가운데 버튼은 이제 안 씀, 그냥 비워두기
 
     if (rollerId === myId) {
       // 🔹 내 턴이면, 굴린 눈에 해당하는 슬롯에만 베팅 버튼 보여주기
@@ -888,11 +899,21 @@ function animatePayout(payout, index) {
   let targetY = sourceRect.top - 40;
 
   let targetElem = null;
+
   if (playerName !== '중립') {
-    if (myNameSpan.textContent === playerName) {
-      targetElem = myMoneySpan;
-    } else if (opponentNameSpan.textContent === playerName) {
-      targetElem = opponentMoneySpan;
+    // 이름으로 플레이어 찾기
+    const targetPlayer = players.find((p) => p.name === playerName);
+
+    if (targetPlayer) {
+      // 내가 받는 돈이면 내 돈 칸으로
+      if (targetPlayer.id === myId) {
+        targetElem = myMoneySpan;
+      } else {
+        // 상대 플레이어면, 해당 플레이어의 돈 칸 찾기
+        targetElem = document.querySelector(
+          `.player-money[data-player-id="${targetPlayer.id}"]`
+        );
+      }
     }
   }
 
