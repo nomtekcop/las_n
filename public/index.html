@@ -333,17 +333,22 @@
   );
 }
       .die {
-        width: 32px;
-        height: 32px;
-        border-radius: 4px;
-        border: 1px solid #999;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 16px;
-        background: #fff;
-        position: relative; 
-      }
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+  border: 1px solid #9ca3af;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  position: relative;
+
+  /* 유광 주사위 느낌 */
+  background: radial-gradient(circle at 30% 25%, #ffffff 0%, #e5e7eb 40%, #cbd5e1 100%);
+  box-shadow:
+    0 1px 0 #ffffff,
+    0 3px 4px rgba(0, 0, 0, 0.45);
+}
       
       /* 주사위 눈 공통 스타일 */
 .die.value-1::before,
@@ -509,21 +514,24 @@
 }
       /* 플레이어 색 */
       .die.color-red {
-        border-color: #ef4444;
-        background: #fee2e2;
-      }
-      .die.color-green {
-        border-color: #22c55e;
-        background: #dcfce7;
-      }
-      .die.color-blue {
-        border-color: #3b82f6;
-        background: #dbeafe;
-      }
-      .die.color-yellow {
-        border-color: #eab308;
-        background: #fef9c3;
-      }
+  border-color: #b91c1c;
+  background: radial-gradient(circle at 30% 25%, #fee2e2, #fecaca, #fca5a5);
+}
+
+.die.color-green {
+  border-color: #15803d;
+  background: radial-gradient(circle at 30% 25%, #dcfce7, #bbf7d0, #86efac);
+}
+
+.die.color-blue {
+  border-color: #1d4ed8;
+  background: radial-gradient(circle at 30% 25%, #dbeafe, #bfdbfe, #93c5fd);
+}
+
+.die.color-yellow {
+  border-color: #a16207;
+  background: radial-gradient(circle at 30% 25%, #fef9c3, #fef3c7, #fde68a);
+}
 
     
   /* 중립은 그냥 흰색 */
@@ -544,59 +552,53 @@
   margin: 0 4px;
 }
 
-/* 굴리기 버튼: 보라 크리스탈 느낌 */
+/* 굴리기 버튼: 어두운 보라 크리스탈 느낌 */
 #roll-btn {
   position: relative;
-  padding: 10px 26px;
+  padding: 10px 24px;
   border-radius: 999px;
-  border: 1px solid #c4b5fd;
-
+  border: 1px solid #4c1d95; /* 보라 라인 */
   background: linear-gradient(
     135deg,
-    #f5f3ff 0%,
-    #ddd6fe 18%,
-    #a855f7 45%,
-    #7c3aed 65%,
-    #4c1d95 100%
+    #170d2c 0%,
+    #21194b 30%,
+    #4338ca 60%,
+    #7c3aed 100%
   );
-
+  box-shadow:
+    0 3px 0 #1e1b4b,
+    0 0 14px rgba(129, 140, 248, 0.7);
   color: #f9fafb;
   font-size: 15px;
   font-weight: 700;
-  letter-spacing: 0.02em;
+  letter-spacing: 0.04em;
   cursor: pointer;
   margin: 0 4px;
-  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
-
-  box-shadow:
-    0 3px 0 #4c1d95,                     /* 아래쪽 딱 눌린 테두리 */
-    0 0 12px rgba(129, 140, 248, 0.8);   /* 보라빛 광채 */
+  text-shadow: 0 1px 0 rgba(0, 0, 0, 0.7);
+  overflow: hidden;
 }
 
-/* 위쪽 유리 하이라이트 */
+/* 위쪽 하이라이트 */
 #roll-btn::before {
   content: '';
   position: absolute;
-  inset: 3px 8px auto 8px;
+  inset: 3px 6px auto 6px;
   height: 45%;
   border-radius: 999px;
   background: linear-gradient(
     to bottom,
-    rgba(255, 255, 255, 0.9),
-    rgba(255, 255, 255, 0.2),
+    rgba(255, 255, 255, 0.5),
     rgba(255, 255, 255, 0)
   );
   pointer-events: none;
 }
 
-/* 비활성화 상태 공통 */
-#roll-btn:disabled,
-#start-game-btn:disabled {
-  opacity: 0.55;
-  cursor: default;
-  box-shadow: none;
-  filter: grayscale(0.1) brightness(0.9);
-}  
+/* 비활성화일 때 */
+#roll-btn:disabled {
+  opacity: 0.5;
+  box-shadow: 0 2px 0 #111827;
+  background: linear-gradient(135deg, #111827, #1f2937);
+}
 
       /* 굴린 주사위 아래, 슬롯 6개와 가로 위치 맞추는 베팅 버튼 줄 */
 #choice-row {
@@ -653,7 +655,7 @@
   align-items: stretch;
 
   /* 전체 높이를 조금 낮게 → 납작한 판 느낌 */
-  height: 150px;
+  min-height: 210px;
 
   border: 2px solid rgba(255, 255, 255, 0.35);
   color: #fff;
