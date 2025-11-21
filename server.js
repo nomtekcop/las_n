@@ -41,10 +41,33 @@ function createDeck() {
   return d;
 }
 
+function getDiceConfigByPlayerCount() {
+  const n = players.length;
+
+  if (n === 2) {
+    // 기존 룰 유지
+    return { color: 8, neutral: 4 };
+  }
+  if (n === 3) {
+    // 3인: 색 8 + 중립 2
+    return { color: 8, neutral: 2 };
+  }
+  if (n >= 4) {
+    // 4인 이상: 중립 없음
+    return { color: 8, neutral: 0 };
+  }
+
+  // 예외적으로 1명일 때 같은 이상한 상황 방어용
+  return { color: 8, neutral: 4 };
+}
+
+
 function resetPlayersForNewRound() {
+  const cfg = getDiceConfigByPlayerCount();
+
   players.forEach((p) => {
-    p.diceColorLeft = 8;
-    p.diceNeutralLeft = 4;
+    p.diceColorLeft = cfg.color;
+    p.diceNeutralLeft = cfg.neutral;
     p.pendingRoll = null;
   });
 }
@@ -64,6 +87,14 @@ function setupCasinosForRound() {
       diceByPlayer: {},
       neutralCount: 0,
     });
+  }
+
+  // ⭐ 3인 게임일 때: 중립 주사위 2개를 랜덤 슬롯에 미리 깔기
+  if (players.length === 3) {
+    for (let i = 0; i < 2; i++) {
+      const r = Math.floor(Math.random() * 6); // 0 ~ 5
+      casinos[r].neutralCount += 1;
+    }
   }
 
   io.emit('roundSetup', {
@@ -249,7 +280,7 @@ function endRound() {
 io.on('connection', (socket) => {
   console.log('새 유저 접속:', socket.id);
 
-  if (players.length >= 2) {
+  if (players.length >= 4) {
     socket.emit('roomFull');
     return;
   }
@@ -302,7 +333,7 @@ io.on('connection', (socket) => {
 
     broadcastPlayerList();
 
-    if (players.length === 2 && !gameStarted) {
+    if (players.length >= 2 && players.length <= 4 && !gameStarted) {
       io.emit('readyToStart', {
         hostId: players[0].id,
         maxRounds,
@@ -326,19 +357,19 @@ io.on('connection', (socket) => {
   socket.on('startGame', () => {
     if (gameStarted) return;
     if (players.length < 2) return;
-    if (socket.id !== players[0].id) return;
-    
+    if (players.length > 4) return;          // 혹시 모르니 방어 코드
+    if (socket.id !== players[0].id) return; // 선 플레이어만 시작
+
+    // 돈만 리셋
     players.forEach((p) => {
       p.money = 0;
-      p.diceColorLeft = 8;
-      p.diceNeutralLeft = 4;
-      p.pendingRoll = null;
     });
 
     gameStarted = true;
     currentRound = 1;
     deck = createDeck();
-    resetPlayersForNewRound();
+
+    resetPlayersForNewRound();  // ← 여기서 인원수에 맞춰 주사위 세팅
     setupCasinosForRound();
 
     currentTurn = players[0].id;
