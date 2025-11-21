@@ -151,43 +151,59 @@
 #bottom-player-area {
   margin-top: 0;
 }      
-      /* 게임 화면 */
- #game-screen {
+      
+/* 게임 화면 - 벨벳 카지노 매트 느낌 */
+#game-screen {
   width: 100%;
   max-width: 1200px;
   height: 90vh;
-  background: #0c3b1a;              /* 짙은 초록색 */
-  border-radius: 16px;
-  border: 2px solid rgba(255, 255, 255, 0.5);  /* 게임판 테두리 */
+
+  /* 진한 초록 벨벳 그라디언트 */
+  background:
+    radial-gradient(circle at 20% 0%, rgba(34,197,94,0.18), transparent 55%),
+    radial-gradient(circle at 80% 100%, rgba(45,212,191,0.18), transparent 55%),
+    linear-gradient(145deg, #022c22, #052e16 45%, #022c22 100%);
+
+  border-radius: 18px;
+  border: 2px solid rgba(255, 255, 255, 0.4);
   padding: 16px 24px 24px;
   display: flex;
   flex-direction: column;
   gap: 12px;
+
+  /* 약간 푹신한 테이블 느낌의 그림자 */
+  box-shadow:
+    0 18px 35px rgba(0,0,0,0.75),
+    inset 0 1px 0 rgba(255,255,255,0.06);
 }
 
-     #round-header {
+     /* ROUND N 보석 느낌 헤더 */
+#round-header {
   font-size: 24px;
-  font-weight: 700;
-  letter-spacing: 4px;
+  font-weight: 800;
+  letter-spacing: 6px;
+  text-transform: uppercase;
 
-  /* ⬇⬇ 이 부분만 바꾼 버전 */
-  background: linear-gradient(
-    135deg,
-    #fafafa,
-    #e5e7eb,
-    #f3f4f6,
-    #ffffff
-  );
-  padding: 6px 12px;
-  border-radius: 10px;
-  border: 1px solid #d4d4d8;
+  position: relative;
+  padding: 8px 28px;
+  border-radius: 999px;
+
+  /* 안쪽은 짙은 초록/검정, 바깥은 골드 링 */
+  background:
+    radial-gradient(circle at 50% 0%, #facc15 0%, #f59e0b 18%, transparent 55%),
+    radial-gradient(circle at 50% 100%, #fbbf24 0%, transparent 50%),
+    linear-gradient(145deg, #020617, #064e3b 50%, #020617 100%);
+
+  border: 2px solid rgba(250, 204, 21, 0.95);
+  color: #f9fafb;
+  text-shadow:
+    0 0 6px rgba(0,0,0,0.9),
+    0 2px 0 rgba(0,0,0,0.7);
 
   box-shadow:
-    inset 0 1px 1px rgba(255, 255, 255, 0.8),
-    0 2px 8px rgba(0, 0, 0, 0.35);
-
-  width: fit-content;
-  margin: 0 auto;
+    0 0 18px rgba(250, 204, 21, 0.9),
+    0 10px 25px rgba(0,0,0,0.8);
+  margin: 0 auto 4px auto;
 }
 
       #top-player-area {
@@ -247,14 +263,20 @@
 #center-area {
   display: flex;
   flex-direction: column;
-  align-items: center;      /* 가로 가운데 정렬 */
+  align-items: center;
   justify-content: flex-start;
   gap: 8px;
-  text-align: center;       /* 글자도 가운데 정렬 */
+  text-align: center;
 
-  background: rgba(255, 255, 255, 0.94);
-  border-radius: 12px;
-  padding: 8px 12px;
+  /* 완전 흰색 대신, 살짝 아이보리 유리 패널 느낌 */
+  background: radial-gradient(circle at 50% 0%, #fefce8 0%, #f5f5f4 35%, #e5e7eb 100%);
+  border-radius: 14px;
+  padding: 10px 18px;
+  border: 1px solid rgba(255, 255, 255, 0.8);
+
+  box-shadow:
+    0 8px 18px rgba(0,0,0,0.35),
+    inset 0 1px 0 rgba(255,255,255,0.9);
 }
 
       #turn-indicator {
@@ -745,36 +767,53 @@
   margin-bottom: 4px;
 }
 
-/* 숫자 들어가는 작은 박스 */
+      /* 슬롯 번호 다이아 크리스탈 */
 .casino-die {
-  min-width: 26px;
-  height: 24px;
-  padding: 0 6px;
-  border-radius: 8px;
-  border: 1px solid #ccc;
-  background: #f7f7f7;
-  color: #333;
-  font-size: 13px;
+  position: relative;
+  width: 32px;
+  height: 32px;
   display: flex;
   align-items: center;
   justify-content: center;
+
+  /* 배경은 투명, 테두리도 제거 → 다이아는 ::before에서 그림 */
+  background: transparent;
+  border: none;
+  color: #111827;
+  font-size: 14px;
+  font-weight: 700;
+  font-style: italic;
+  letter-spacing: 0.03em;
+  z-index: 1; /* 다이아 위에 숫자 올라오게 */
+  text-shadow: 0 1px 0 rgba(255,255,255,0.7);
 }
+
+/* 다이아몬드 모양 배경 */
+.casino-die::before {
+  content: '';
+  position: absolute;
+  inset: 3px;
+  background: linear-gradient(
+    135deg,
+    #ffffff,
+    #e5e7eb,
+    #f9fafb,
+    #fefce8
+  );
+  border-radius: 6px;
+  box-shadow:
+    0 0 8px rgba(255,255,255,0.8),
+    0 2px 4px rgba(0,0,0,0.45);
+  transform: rotate(45deg); /* 다이아 형태 */
+  border: 1px solid rgba(209,213,219,0.9);
+}
+      
       .casino-header {
         display: flex;
         justify-content: center;
         margin-bottom: 4px;
       }
-      .casino-die {
-        width: 28px;
-        height: 28px;
-        border-radius: 4px;
-        border: 1px solid #999;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 14px;
-        background: #fafafa;
-      }
+     
       .casino-dice-summary {
         font-size: 11px;
         min-height: 16px;
