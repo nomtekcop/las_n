@@ -32,6 +32,8 @@ const choiceRow = document.getElementById('choice-row');
 const casinoRow = document.getElementById('casino-row');
 const logArea = document.getElementById('log-area');
 const roundCountSelect = document.getElementById('round-count-select');
+const logContainer = document.getElementById('log-container');   // ✅ 추가
+const logToggleBtn = document.getElementById('log-toggle-btn');  // ✅ 추가
 
 // 🎵 오디오 & 슬라이더
 const bgm = document.getElementById('bgm');
@@ -90,6 +92,13 @@ function addLog(text) {
   p.textContent = text;
   logArea.appendChild(p);
   logArea.scrollTop = logArea.scrollHeight;
+}
+
+if (logToggleBtn && logContainer) {
+  logToggleBtn.addEventListener('click', () => {
+    const isCollapsed = logContainer.classList.toggle('collapsed');
+    logToggleBtn.textContent = isCollapsed ? '로그 켜기' : '로그 끄기';
+  });
 }
 
 function renderOpponentPanels() {
