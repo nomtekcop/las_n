@@ -12,10 +12,7 @@ const avatarDropText = document.getElementById('avatar-drop-text');
 const enterGameBtn = document.getElementById('enter-game-btn');
 
 const roundNumberSpan = document.getElementById('round-number');
-const opponentNameSpan = document.getElementById('opponent-name');
-const opponentMoneySpan = document.getElementById('opponent-money');
-const opponentAvatarImg = document.getElementById('opponent-avatar');
-const opponentDiceRow = document.getElementById('opponent-dice-row');
+const topPlayerArea = document.getElementById('top-player-area');
 
 const myNameSpan = document.getElementById('my-name');
 const myMoneySpan = document.getElementById('my-money');
@@ -93,6 +90,52 @@ function addLog(text) {
   p.textContent = text;
   logArea.appendChild(p);
   logArea.scrollTop = logArea.scrollHeight;
+}
+
+function renderOpponentPanels() {
+  if (!topPlayerArea) return;
+  topPlayerArea.innerHTML = '';
+
+  // 아직 내 id를 모르면 렌더 안 함
+  if (!myId) return;
+
+  const me = players.find((p) => p.id === myId);
+  const others = players.filter((p) => p.id !== myId);
+
+  // 상대가 0명인 경우
+  if (others.length === 0) {
+    return;
+  }
+
+  // 컨테이너 스타일: 여러 명 가로로 배치
+  topPlayerArea.style.display = 'flex';
+  topPlayerArea.style.justifyContent = 'center';
+  topPlayerArea.style.gap = '12px';
+
+  others.forEach((p) => {
+    const panel = document.createElement('div');
+    panel.className = 'player-panel opponent-panel';
+    panel.dataset.playerId = p.id;
+
+    // 아바타 src, 이름, 돈, 주사위 표시 자리
+    const avatarSrc = p.avatar || '';
+    const displayName = p.name || '플레이어';
+
+    panel.innerHTML = `
+      <div class="avatar-circle">
+        <img class="avatar-img" src="${avatarSrc}" alt="" />
+      </div>
+      <div>
+        <div class="player-name">${displayName}</div>
+        <div class="player-money" data-player-id="${p.id}">
+          ${(p.money ?? 0).toLocaleString()} $
+        </div>
+      </div>
+      <div class="opponent-dice-row" data-player-id="${p.id}"></div>
+    `;
+
+    topPlayerArea.appendChild(panel);
+  });
 }
 
 // 주사위 DOM
@@ -301,24 +344,19 @@ function updateCasinoDiceSummaries(casinosState) {
 // 남은 주사위 개수를 내/상대 프사 옆에 "아이콘 + 개수"로 표시
 function updateRemainingDiceUI() {
   const me = players.find((p) => p.id === myId);
-  const others = players.filter((p) => p.id !== myId);
-
-  myDiceRow.innerHTML = '';
-  opponentDiceRow.innerHTML = '';
-
   if (!me) return;
 
   // 공통 렌더 함수: 색 주사위 ? 하나 + 숫자, 중립 주사위 ? 하나 + 숫자
   function renderRemainingDiceSummary(container, player) {
+    if (!container) return;
     container.innerHTML = '';
 
     const colorLeft = player.diceColorLeft ?? 0;
     const neutralLeft = player.diceNeutralLeft ?? 0;
 
-    // 아무 것도 없으면 비워두기
     if (colorLeft <= 0 && neutralLeft <= 0) return;
 
-    // 색 주사위 요약
+    // 색 주사위
     if (colorLeft > 0) {
       const wrap = document.createElement('div');
       wrap.className = 'dice-count';
@@ -332,7 +370,7 @@ function updateRemainingDiceUI() {
       container.appendChild(wrap);
     }
 
-    // 중립 주사위 요약
+    // 중립 주사위
     if (neutralLeft > 0) {
       const wrap = document.createElement('div');
       wrap.className = 'dice-count';
@@ -348,13 +386,20 @@ function updateRemainingDiceUI() {
   }
 
   // 내 주사위
-  renderRemainingDiceSummary(myDiceRow, me);
-
-  // 지금은 “상대 1명”만 있다고 가정 → 첫 번째 other만 사용
-  const opp = others[0];
-  if (opp) {
-    renderRemainingDiceSummary(opponentDiceRow, opp);
+  if (myDiceRow) {
+    renderRemainingDiceSummary(myDiceRow, me);
   }
+
+  // 상대들 주사위
+  const others = players.filter((p) => p.id !== myId);
+  others.forEach((p) => {
+    const row = document.querySelector(
+      `.opponent-dice-row[data-player-id="${p.id}"]`
+    );
+    if (row) {
+      renderRemainingDiceSummary(row, p);
+    }
+  });
 }
 
     
@@ -444,30 +489,39 @@ function connectSocket() {
   });
 
   socket.on('playerList', (list) => {
-    players = list;
-    const me = list.find((p) => p.id === myId);
-    const opp = list.find((p) => p.id !== myId);
+  players = list;
 
-    if (me) {
-      isHost = me.index === 1;
-      if (isHost && !gameStarted && list.length === 2) {
-        startGameBtn.disabled = false;
-        roundCountSelect.disabled = false;
-      }
+  const me = list.find((p) => p.id === myId);
+
+  if (me) {
+    isHost = me.index === 1;
+    // 내 이름, 돈, 아바타 갱신
+    myNameSpan.textContent = me.name || '나';
+    myMoneySpan.textContent = (me.money ?? 0).toLocaleString() + ' $';
+    if (me.avatar) myAvatarImg.src = me.avatar;
+
+    // 내 돈 span에도 playerId 달아두면 나중에 공통 처리 편해짐
+    myMoneySpan.dataset.playerId = me.id;
+  }
+
+  // 시작 버튼 활성화 조건: 2~4명, 아직 게임 시작 전, 내가 호스트일 때
+  if (me) {
+    if (isHost && !gameStarted && list.length >= 2 && list.length <= 4) {
+      startGameBtn.disabled = false;
+      roundCountSelect.disabled = false;
+    } else if (!gameStarted) {
+      startGameBtn.disabled = true;
+      roundCountSelect.disabled = true;
     }
+  }
 
-    if (opp) {
-      opponentNameSpan.textContent = opp.name || '상대 플레이어';
-      opponentMoneySpan.textContent = (opp.money ?? 0) + ' $';
-      if (opp.avatar) opponentAvatarImg.src = opp.avatar;
-    } else {
-      opponentNameSpan.textContent = '상대 대기 중…';
-      opponentMoneySpan.textContent = '0 $';
-      opponentAvatarImg.removeAttribute('src');
-    }
-    updateAvatarBorders();
-  });
+  // 상대들 패널 다시 그림
+  renderOpponentPanels();
+  updateAvatarBorders();
+});
 
+
+  
   socket.on('readyToStart', ({ hostId, maxRounds }) => {
     if (maxRounds) {
       currentMaxRounds = maxRounds;
@@ -532,20 +586,43 @@ function connectSocket() {
       roundCountSelect.value = String(state.maxRounds);
     }
 
-    players.forEach((p) => {
-      if (p.id === myId) {
-        myMoneySpan.textContent = (p.money ?? 0) + ' $';
-      } else {
-        opponentMoneySpan.textContent = (p.money ?? 0) + ' $';
-      }
-    });
+    socket.on('gameState', (state) => {
+  if (state.round) {
+    roundNumberSpan.textContent = String(state.round);
+  }
+  players = state.players || players;
+  currentTurnId = state.currentTurnId || currentTurnId;
+  if (state.maxRounds) {
+    currentMaxRounds = state.maxRounds;
+    roundCountSelect.value = String(state.maxRounds);
+  }
 
- // 🔹 최신 슬롯 상태 저장
-  latestCasinosState = state.casinos || [];
-    
-    updateCasinoDiceSummaries(state.casinos || []);
-    updateRemainingDiceUI();
+  // 💰 모든 플레이어 돈 텍스트 갱신
+  players.forEach((p) => {
+    // 내 돈
+    if (p.id === myId) {
+      myMoneySpan.textContent =
+        (p.money ?? 0).toLocaleString() + ' $';
+      myMoneySpan.dataset.playerId = p.id;
+    }
+
+    // 상대들 돈
+    const moneyElem = document.querySelector(
+      `.player-money[data-player-id="${p.id}"]`
+    );
+    if (moneyElem) {
+      moneyElem.textContent = (p.money ?? 0).toLocaleString() + ' $';
+    }
   });
+
+  // 🔹 최신 슬롯 상태 저장
+  latestCasinosState = state.casinos || [];
+
+  updateCasinoDiceSummaries(state.casinos || []);
+  updateRemainingDiceUI();
+  renderOpponentPanels();   // 혹시 인원 변동시 다시 그리기
+  updateAvatarBorders();
+});
 
   socket.on('diceRolled', ({ rollerId, rollerName, dice }) => {
     const roller = players.find((p) => p.id === rollerId);
@@ -692,17 +769,26 @@ function updateTurnUI(currentPlayerId, currentPlayerName) {
 
 function updateAvatarBorders() {
   const me = players.find((p) => p.id === myId);
-  const opp = players.find((p) => p.id !== myId);
 
   if (me && myAvatarImg) {
     const c = avatarColorMap[me.color] || '#333333';
     myAvatarImg.style.borderColor = c;
   }
-  if (opp && opponentAvatarImg) {
-    const c = avatarColorMap[opp.color] || '#333333';
-    opponentAvatarImg.style.borderColor = c;
-  }
+
+  // 상대들 아바타
+  const others = players.filter((p) => p.id !== myId);
+  others.forEach((p) => {
+    const panel = document.querySelector(
+      `.opponent-panel[data-player-id="${p.id}"]`
+    );
+    if (!panel) return;
+    const img = panel.querySelector('.avatar-img');
+    if (!img) return;
+    const c = avatarColorMap[p.color] || '#333333';
+    img.style.borderColor = c;
+  });
 }
+
 // 모든 슬롯의 베팅 버튼 숨기기
 function hideAllBetButtons() {
   document.querySelectorAll('.bet-btn').forEach((btn) => {
