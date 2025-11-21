@@ -165,6 +165,7 @@ function renderGroupedDiceRoll(dice, playerColor) {
 // 슬롯 6개 기본 뼈대 생성
 function setupCasinosEmpty() {
   casinoRow.innerHTML = '';
+
   for (let i = 1; i <= 6; i++) {
     const casino = document.createElement('div');
     casino.className = 'casino';
@@ -172,28 +173,46 @@ function setupCasinosEmpty() {
     const header = document.createElement('div');
     header.className = 'casino-header';
 
-    // ✅ 숫자 들어가는 작은 박스 생성
+    // 슬롯 번호 박스
     const label = document.createElement('div');
     label.className = 'casino-die';
-    label.textContent = String(i);   // 1 ~ 6 숫자
+    label.textContent = String(i);
     header.appendChild(label);
 
+    // 🔥 슬롯별 베팅 버튼 (추가된 부분)
+    const betBtn = document.createElement('button');
+    betBtn.className = 'bet-btn hidden';
+    betBtn.textContent = '이 슬롯에 배팅';
+    betBtn.dataset.casinoIndex = i;
+    betBtn.addEventListener('click', () => {
+      if (!socket) return;
+      socket.emit('chooseBetValue', i);
+      hideAllBetButtons();
+      rollBtn.disabled = true;
+    });
+
+    // 주사위 요약
     const summary = document.createElement('div');
     summary.className = 'casino-dice-summary';
     summary.id = `casino-dice-${i}`;
 
+    // 주사위 아이콘 영역
     const diceArea = document.createElement('div');
     diceArea.className = 'casino-dice-area';
     diceArea.id = `casino-dice-area-${i}`;
 
+    // 돈(지폐) 표시 영역
     const moneyList = document.createElement('div');
     moneyList.className = 'casino-money-list';
     moneyList.id = `casino-money-${i}`;
 
+    // 🔽 구성 요소 추가 순서
     casino.appendChild(header);
+    casino.appendChild(betBtn);     // 🔥 슬롯 상단에 베팅 버튼
     casino.appendChild(summary);
     casino.appendChild(diceArea);
     casino.appendChild(moneyList);
+
     casinoRow.appendChild(casino);
   }
 }
@@ -536,21 +555,14 @@ function connectSocket() {
 
     renderGroupedDiceRoll(dice, rollerColor);
 
-    choiceRow.innerHTML = '';
+    choiceRow.innerHTML = ''; // 가운데 버튼은 이제 안 씀, 그냥 비워두기
 
     if (rollerId === myId) {
-      const values = [...new Set(dice.map((d) => d.value))].sort();
-      values.forEach((v) => {
-        const btn = document.createElement('button');
-        btn.className = 'choice-btn';
-        btn.textContent = `${v}번 슬롯에 배팅`;
-        btn.addEventListener('click', () => {
-          socket.emit('chooseBetValue', v);
-          choiceRow.innerHTML = '';
-          rollBtn.disabled = true;
-        });
-        choiceRow.appendChild(btn);
-      });
+      // 🔹 내 턴이면, 굴린 눈에 해당하는 슬롯에만 베팅 버튼 보여주기
+      showBetButtonsForDice(dice);
+    } else {
+      // 상대 턴이면 모두 숨김
+      hideAllBetButtons();
     }
   });
 
@@ -562,6 +574,7 @@ function connectSocket() {
 
     animateDiceToCasino(playerId, casinoIndex, colorCount, neutralCount);
     rolledDiceRow.innerHTML = '';
+    hideAllBetButtons();   // 🔹 베팅 끝나면 슬롯 버튼도 닫기
   });
 
   socket.on('payouts', (payouts) => {
@@ -690,7 +703,28 @@ function updateAvatarBorders() {
     opponentAvatarImg.style.borderColor = c;
   }
 }
+// 모든 슬롯의 베팅 버튼 숨기기
+function hideAllBetButtons() {
+  document.querySelectorAll('.bet-btn').forEach((btn) => {
+    btn.classList.add('hidden');
+    btn.disabled = true;
+  });
+}
 
+// 내 주사위 결과에 해당하는 슬롯만 베팅 버튼 보여주기
+function showBetButtonsForDice(dice) {
+  hideAllBetButtons();
+  if (!dice || !Array.isArray(dice)) return;
+
+  const values = [...new Set(dice.map((d) => d.value))];  // 중복 제거
+  values.forEach((v) => {
+    const btn = document.querySelector(`.bet-btn[data-casino-index="${v}"]`);
+    if (btn) {
+      btn.classList.remove('hidden');
+      btn.disabled = false;
+    }
+  });
+}
 
 function darkenTiedDiceForCasino(casinoIndex) {
   if (!latestCasinosState || latestCasinosState.length === 0) return;
