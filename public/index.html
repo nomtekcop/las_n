@@ -130,11 +130,19 @@
   gap: 12px;
 }
 
-      #round-header {
-        font-size: 24px;
-        font-weight: 700;
-        letter-spacing: 4px;
-      }
+     #round-header {
+  font-size: 24px;
+  font-weight: 700;
+  letter-spacing: 4px;
+
+  background: rgba(255, 255, 255, 0.95); /* 흰 배경 */
+  padding: 6px 12px;
+  border-radius: 10px;
+  border: 1px solid rgba(0,0,0,0.15);
+
+  width: fit-content;   /* 글자만큼만 배경 */
+  margin: 0 auto;       /* 가운데 정렬 */
+}
 
       #top-player-area {
         display: flex;
