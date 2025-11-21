@@ -267,7 +267,7 @@ function setupBetButtonsRow() {
 
     const betBtn = document.createElement('button');
     betBtn.className = 'bet-btn hidden';
-    betBtn.textContent = '이 슬롯에 배팅';
+    betBtn.textContent = '배팅하기';
     betBtn.dataset.casinoIndex = i;
     betBtn.addEventListener('click', () => {
       if (!socket) return;
