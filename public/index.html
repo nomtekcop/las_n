@@ -488,12 +488,20 @@
       }
 
       #choice-row {
-        display: flex;
-        gap: 4px;
-        min-height: 32px;
-        flex-wrap: wrap;
-        justify-content: center;
-      }
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);  /* 슬롯 6개랑 맞추기 */
+  gap: 8px;
+  margin-top: 8px;
+  min-height: 40px;     /* 버튼이 없어도 높이 유지 */
+}
+
+/* 각 칸(슬롯별 버튼 자리) */
+.choice-cell {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+      
       .choice-btn {
         padding: 4px 8px;
         border-radius: 6px;
