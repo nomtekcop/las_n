@@ -41,7 +41,12 @@ const sfxStart = document.getElementById('sfx-start');
 const sfxDice = document.getElementById('sfx-dice');
 const sfxMoney = document.getElementById('sfx-money');
 const sfxWin = document.getElementById('sfx-win');
-
+// 🔉 전체 사운드 볼륨 설정 (0.0 ~ 1.0)
+bgm.volume = 0.25;        // 배경음악은 잔잔하게
+sfxStart.volume = 0.4;    // 게임 시작
+sfxDice.volume = 0.45;    // 주사위
+sfxMoney.volume = 0.35;   // 돈
+sfxWin.volume = 0.5;      // 승리음 (조금 강조)
 
 const avatarColorMap = {
   red: '#ff7675',
