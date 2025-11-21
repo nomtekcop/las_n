@@ -36,6 +36,13 @@ const casinoRow = document.getElementById('casino-row');
 const logArea = document.getElementById('log-area');
 const roundCountSelect = document.getElementById('round-count-select');
 
+const bgm = document.getElementById('bgm');
+const sfxStart = document.getElementById('sfx-start');
+const sfxDice = document.getElementById('sfx-dice');
+const sfxMoney = document.getElementById('sfx-money');
+const sfxWin = document.getElementById('sfx-win');
+
+
 const avatarColorMap = {
   red: '#ff7675',
   blue: '#74b9ff',
@@ -88,6 +95,12 @@ function createDie(value, cssClass) {
   }
 
   return div;
+}
+
+function play(sound) {
+  if (!sound) return;
+  sound.currentTime = 0;
+  sound.play().catch(() => {});
 }
 
 // 굴린 주사위 표시 (숫자별로 모으는 애니메이션 느낌)
@@ -330,6 +343,8 @@ enterGameBtn.addEventListener('click', async () => {
   gameScreen.classList.remove('hidden');
   setupCasinosEmpty();
   connectSocket();
+  play(bgm);
+bgm.volume = 0.4; // 볼륨 적당하게
 });
 
 /* ---------- 소켓 & 게임 화면 ---------- */
@@ -517,7 +532,7 @@ function connectSocket() {
 
   socket.on('gameOver', ({ players: finalPlayers, winnerId, winnerName, maxRounds }) => {
   gameStarted = false;
-
+  play(sfxWin);
   const rounds = maxRounds || currentMaxRounds;
   gameOverTitle.textContent = `게임 종료 (총 ${rounds}라운드)`;
 
@@ -569,12 +584,14 @@ function connectSocket() {
 
   startGameBtn.addEventListener('click', () => {
     if (!isHost) return;
+    play(sfxStart);
     socket.emit('startGame');
     startGameBtn.disabled = true;
   });
 
   rollBtn.addEventListener('click', () => {
     if (!socket) return;
+    play(sfxDice);
     myDiceRow.innerHTML = '';
     socket.emit('rollDice');
   });
@@ -737,6 +754,7 @@ function animatePayout(payout, index) {
   const delay = 80 * (index ?? 0);
 
   setTimeout(() => {
+    play(sfxMoney);
     moneyEl.style.left = targetX + 'px';
     moneyEl.style.top = targetY + 'px';
     moneyEl.style.transform = 'scale(0.8)';
