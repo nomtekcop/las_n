@@ -116,6 +116,27 @@
         cursor: default;
       }
 
+/* 🔊 BGM 볼륨 슬라이더 패널 */
+#sound-panel {
+  background: rgba(255, 255, 255, 0.92);
+  border-radius: 12px;
+  padding: 6px 10px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+}
+
+#sound-panel label {
+  font-weight: 600;
+  color: #333;
+}
+
+#bgm-volume {
+  width: 120px;
+  cursor: pointer;
+}
+      
       /* 게임 화면 */
  #game-screen {
   width: 100%;
@@ -756,6 +777,22 @@
           </div>
           <div id="opponent-dice-row"></div>
         </div>
+
+  <!-- 🔊 BGM 볼륨 슬라이더 패널 -->
+  <div id="sound-panel">
+    <label for="bgm-volume">BGM</label>
+    <input
+      id="bgm-volume"
+      type="range"
+      min="0"
+      max="1"
+      step="0.01"
+      value="0.25"
+    />
+  </div>
+
+
+        
       </div>
 
       <div id="center-area">
