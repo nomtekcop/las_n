@@ -279,37 +279,63 @@ function updateCasinoDiceSummaries(casinosState) {
 
 
 
-// 남은 주사위 개수를 내/상대 프사 옆에 표시
+// 남은 주사위 개수를 내/상대 프사 옆에 "아이콘 + 개수"로 표시
 function updateRemainingDiceUI() {
   const me = players.find((p) => p.id === myId);
-  const opp = players.find((p) => p.id !== myId);
+  const others = players.filter((p) => p.id !== myId);
 
   myDiceRow.innerHTML = '';
   opponentDiceRow.innerHTML = '';
 
-  if (!me || !opp) return;
+  if (!me) return;
 
-  function renderRemainingDice(container, player) {
+  // 공통 렌더 함수: 색 주사위 ? 하나 + 숫자, 중립 주사위 ? 하나 + 숫자
+  function renderRemainingDiceSummary(container, player) {
+    container.innerHTML = '';
+
     const colorLeft = player.diceColorLeft ?? 0;
     const neutralLeft = player.diceNeutralLeft ?? 0;
 
-    // 색 주사위들 → ? 표시
-    for (let i = 0; i < colorLeft; i++) {
-      container.appendChild(
-        createDie('?', 'color-' + (player.color || 'red')),
-      );
+    // 아무 것도 없으면 비워두기
+    if (colorLeft <= 0 && neutralLeft <= 0) return;
+
+    // 색 주사위 요약
+    if (colorLeft > 0) {
+      const wrap = document.createElement('div');
+      wrap.className = 'dice-count';
+
+      const icon = createDie('?', 'small-die color-' + (player.color || 'red'));
+      const text = document.createElement('span');
+      text.textContent = `× ${colorLeft}`;
+
+      wrap.appendChild(icon);
+      wrap.appendChild(text);
+      container.appendChild(wrap);
     }
-    // 중립 주사위들 → ? 표시
-    for (let i = 0; i < neutralLeft; i++) {
-      container.appendChild(
-        createDie('?', 'neutral'),
-      );
+
+    // 중립 주사위 요약
+    if (neutralLeft > 0) {
+      const wrap = document.createElement('div');
+      wrap.className = 'dice-count';
+
+      const icon = createDie('?', 'small-die neutral');
+      const text = document.createElement('span');
+      text.textContent = `× ${neutralLeft}`;
+
+      wrap.appendChild(icon);
+      wrap.appendChild(text);
+      container.appendChild(wrap);
     }
   }
 
-  // 항상 둘 다 보여주기
-  renderRemainingDice(myDiceRow, me);
-  renderRemainingDice(opponentDiceRow, opp);
+  // 내 주사위
+  renderRemainingDiceSummary(myDiceRow, me);
+
+  // 지금은 “상대 1명”만 있다고 가정 → 첫 번째 other만 사용
+  const opp = others[0];
+  if (opp) {
+    renderRemainingDiceSummary(opponentDiceRow, opp);
+  }
 }
 
     
