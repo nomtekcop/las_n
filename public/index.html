@@ -232,11 +232,11 @@
           opacity 0.5s ease, transform 0.5s ease;
       }
       #center-area {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 8px;
-      }
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;  /* 전체 너비로 늘리기 */
+  gap: 8px;
+}
 
       #turn-indicator {
         font-size: 16px;
@@ -252,16 +252,17 @@
         flex-wrap: wrap;
       }
       
-/* 슬롯별 베팅 버튼 */
+/* 노란 베팅 버튼 (조금 더 크게) */
 .bet-btn {
-  margin: 4px auto;
-  padding: 4px 8px;
-  border-radius: 8px;
-  border: 1px solid rgba(255, 255, 255, 0.7);
-  background: rgba(250, 204, 21, 0.95);
+  padding: 8px 16px;
+  border-radius: 999px;
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  background: rgba(250, 204, 21, 0.98);
   color: #111;
-  font-size: 12px;
+  font-size: 14px;
+  font-weight: 600;
   cursor: pointer;
+  white-space: nowrap;
 }
 
 .bet-btn.hidden {
@@ -489,12 +490,15 @@
         cursor: default;
       }
 
-      #choice-row {
+      /* 굴린 주사위 아래, 슬롯 6개와 가로 위치 맞추는 베팅 버튼 줄 */
+#choice-row {
   display: grid;
-  grid-template-columns: repeat(6, 1fr);  /* 슬롯 6개랑 맞추기 */
-  gap: 8px;
-  margin-top: 8px;
-  min-height: 40px;     /* 버튼이 없어도 높이 유지 */
+  grid-template-columns: repeat(6, 1fr);  /* 슬롯 6개와 가로 정렬 */
+  gap: 16px;                              /* 버튼 사이 간격 넉넉하게 */
+  margin-top: 12px;
+  min-height: 48px;
+  width: 100%;                            /* 게임판 전체 너비 사용 */
+  align-self: stretch;
 }
 
 /* 각 칸(슬롯별 버튼 자리) */
@@ -793,14 +797,47 @@
         cursor: pointer;
       }
 
-      #log-area {
-        font-size: 12px;
-        max-height: 90px;
-        overflow-y: auto;
-        border-top: 1px solid #eee;
-        padding-top: 4px;
-        color: #555;
-      }
+      /* 로그 전체 박스 */
+#log-container {
+  margin-top: 8px;
+  background: rgba(255, 255, 255, 0.94);
+  border-radius: 12px;
+  padding: 6px 10px;
+}
+
+/* 헤더: 우측에 토글 버튼 */
+#log-header {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  margin-bottom: 4px;
+}
+
+/* 로그 켜기/끄기 버튼 */
+#log-toggle-btn {
+  padding: 3px 10px;
+  font-size: 11px;
+  border-radius: 999px;
+  border: 1px solid #d4d4d8;
+  background: #f3f4f6;
+  color: #111827;
+  cursor: pointer;
+}
+
+/* 실제 로그 내용 영역 */
+#log-area {
+  font-size: 12px;
+  max-height: 90px;
+  overflow-y: auto;
+  border-top: 1px solid #e5e7eb;
+  padding-top: 4px;
+  color: #555;
+}
+
+/* 기본은 접혀 있음 */
+#log-container.collapsed #log-area {
+  display: none;
+}
     </style>
   </head>
   <body>
@@ -905,7 +942,12 @@
         </div>
       </div>
 
-      <div id="log-area"></div>
+      <div id="log-container" class="collapsed">
+  <div id="log-header">
+    <button id="log-toggle-btn">로그 켜기</button>
+  </div>
+  <div id="log-area"></div>
+</div>
     </div>
 
 <audio id="bgm" src="sounds/bgm.mp3" loop></audio>
