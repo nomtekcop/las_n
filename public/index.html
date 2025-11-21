@@ -73,7 +73,8 @@
 #roll-btn,
 #start-game-btn,
 .choice-btn,
-.game-over-restart-btn {
+.game-over-restart-btn,
+.bet-btn{
   transition:
     transform 0.06s ease,
     box-shadow 0.06s ease,
@@ -85,7 +86,8 @@
 #roll-btn:hover,
 #start-game-btn:hover,
 .choice-btn:hover,
-.game-over-restart-btn:hover {
+.game-over-restart-btn:hover,
+.bet-btn:hover {
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
   filter: brightness(1.03);
 }
@@ -95,7 +97,8 @@
 #roll-btn:active,
 #start-game-btn:active,
 .choice-btn:active,
-.game-over-restart-btn:active {
+.game-over-restart-btn:active,
+.bet-btn:active {
   transform: translateY(1px) scale(0.97);
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
   filter: brightness(0.96);
@@ -136,7 +139,18 @@
   width: 120px;
   cursor: pointer;
 }
-      
+/* 슬롯 아래, 내 정보 + BGM 슬라이더 한 줄로 */
+#bottom-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-top: 4px;
+}
+
+/* bottom-player-area는 이제 margin-top 필요 없음 */
+#bottom-player-area {
+  margin-top: 0;
+}      
       /* 게임 화면 */
  #game-screen {
   width: 100%;
@@ -235,7 +249,27 @@
         justify-content: center;
         flex-wrap: wrap;
       }
+      
+/* 슬롯별 베팅 버튼 */
+.bet-btn {
+  margin: 4px auto;
+  padding: 4px 8px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  background: rgba(250, 204, 21, 0.95);
+  color: #111;
+  font-size: 12px;
+  cursor: pointer;
+}
 
+.bet-btn.hidden {
+  display: none;
+}
+
+.bet-btn:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
       .die {
         width: 32px;
         height: 32px;
@@ -792,22 +826,6 @@
           </div>
           <div id="opponent-dice-row"></div>
         </div>
-
-  <!-- 🔊 BGM 볼륨 슬라이더 패널 -->
-  <div id="sound-panel">
-    <label for="bgm-volume">BGM</label>
-    <input
-      id="bgm-volume"
-      type="range"
-      min="0"
-      max="1"
-      step="0.01"
-      value="0.25"
-    />
-  </div>
-
-
-        
       </div>
 
       <div id="center-area">
@@ -832,7 +850,8 @@
       <div id="casino-row">
         <!-- 6개 카지노는 JS에서 생성 -->
       </div>
-
+      
+<div id="bottom-bar">
       <div id="bottom-player-area">
         <div class="player-panel">
           <div class="avatar-circle">
@@ -845,6 +864,22 @@
           <div id="my-dice-row"></div>
         </div>
       </div>
+      
+ <!-- 🔊 BGM 볼륨 슬라이더 패널 -->
+  <div id="sound-panel">
+    <label for="bgm-volume">BGM</label>
+    <input
+      id="bgm-volume"
+      type="range"
+      min="0"
+      max="1"
+      step="0.01"
+      value="0.25"
+    />
+  </div>
+</div>
+
+      
       <div id="game-over-panel" class="hidden">
         <div class="game-over-card">
           <div id="game-over-title" class="game-over-title">
