@@ -180,10 +180,12 @@
 }
 
       #top-player-area {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-      }
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 24px;          /* 프로필들 사이 간격 넉넉하게 */
+  margin-bottom: 4px;
+}
 
       .player-panel {
         display: flex;
@@ -685,11 +687,21 @@
   color: #7f1d1d;
 }
       
-/* 위쪽 상대 이름 칸 */
-#opponent-panel {
+/* 위쪽 상대 플레이어 박스 (동적으로 그려지는 패널) */
+.opponent-panel {
   background: rgba(255, 255, 255, 0.92);
   border-radius: 12px;
   padding: 6px 10px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* 상대의 남은 주사위 표시 줄 */
+.opponent-dice-row {
+  display: flex;
+  gap: 4px;
+  margin-left: 6px;
 }
 
 /* 아래쪽 내 이름 칸 (안에 player-panel 하나 더 있어서 그쪽에 적용) */
