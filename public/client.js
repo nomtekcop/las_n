@@ -162,7 +162,7 @@ function renderGroupedDiceRoll(dice, playerColor) {
   }
 }
 
-// 카지노 6개 기본 뼈대 생성
+// 슬롯 6개 기본 뼈대 생성
 function setupCasinosEmpty() {
   casinoRow.innerHTML = '';
   for (let i = 1; i <= 6; i++) {
@@ -245,7 +245,7 @@ function animateRoundSetup(payload) {
   });
 }
 
-// 카지노 위 주사위 요약 + 실제 주사위 아이콘 표시
+// 슬롯 위 주사위 요약 + 실제 주사위 아이콘 표시
 function updateCasinoDiceSummaries(casinosState) {
   if (!casinosState) return;
 
@@ -262,7 +262,7 @@ function updateCasinoDiceSummaries(casinosState) {
       const count = c.diceByPlayer?.[p.id] || 0;
       for (let i = 0; i < count; i++) {
         const cls = 'small-die color-' + (p.color || 'red');
-        const dieEl = createDie(c.index, cls);   // 카지노 번호만큼 눈 표시
+        const dieEl = createDie(c.index, cls);   // 슬롯 번호만큼 눈 표시
         dieEl.dataset.playerId = p.id;         // 🔹 이 줄 추가
         diceArea.appendChild(dieEl);
       }
@@ -495,7 +495,7 @@ function connectSocket() {
       }
     });
 
- // 🔹 최신 카지노 상태 저장
+ // 🔹 최신 슬롯 상태 저장
   latestCasinosState = state.casinos || [];
     
     updateCasinoDiceSummaries(state.casinos || []);
@@ -517,7 +517,7 @@ function connectSocket() {
       values.forEach((v) => {
         const btn = document.createElement('button');
         btn.className = 'choice-btn';
-        btn.textContent = `${v}번 카지노에 배팅`;
+        btn.textContent = `${v}번 슬롯에 배팅`;
         btn.addEventListener('click', () => {
           socket.emit('chooseBetValue', v);
           choiceRow.innerHTML = '';
@@ -531,7 +531,7 @@ function connectSocket() {
   socket.on('betPlaced', ({ playerId, playerName, casinoIndex, colorCount, neutralCount }) => {
     const owner = playerId === myId ? '나' : playerName;
     addLog(
-      `${owner}가 ${casinoIndex}번 카지노에 색 주사위 ${colorCount}개, 중립 ${neutralCount}개를 배팅했습니다.`,
+      `${owner}가 ${casinoIndex}번 슬롯에 색 주사위 ${colorCount}개, 중립 ${neutralCount}개를 배팅했습니다.`,
     );
 
     animateDiceToCasino(playerId, casinoIndex, colorCount, neutralCount);
@@ -539,8 +539,8 @@ function connectSocket() {
   });
 
   socket.on('payouts', (payouts) => {
-  // 서버에서 카지노별로 한 번씩 보내주는 payouts 배열을
-  // 큐에 차례대로 쌓아둠 (1번 카지노, 2번 카지노, ...)
+  // 서버에서 슬롯별로 한 번씩 보내주는 payouts 배열을
+  // 큐에 차례대로 쌓아둠 (1번 슬롯, 2번 슬롯, ...)
   payoutQueue.push(payouts);
   if (!isProcessingPayouts) {
     processNextPayoutBatch();
@@ -669,7 +669,7 @@ function updateAvatarBorders() {
 function darkenTiedDiceForCasino(casinoIndex) {
   if (!latestCasinosState || latestCasinosState.length === 0) return;
 
-  // 1) 이 카지노 상태 찾기
+  // 1) 이 슬롯 상태 찾기
   const casino = latestCasinosState.find((c) => c.index === casinoIndex);
   if (!casino || !casino.diceByPlayer) return;
 
@@ -696,7 +696,7 @@ function darkenTiedDiceForCasino(casinoIndex) {
   // 동률이 하나도 없으면 끝
   if (tiedIds.size === 0) return;
 
-  // 5) DOM에서 해당 카지노 주사위들 중, tiedIds에 포함된 플레이어의 주사위만 어둡게
+  // 5) DOM에서 해당 슬롯 주사위들 중, tiedIds에 포함된 플레이어의 주사위만 어둡게
   const diceArea = document.getElementById(`casino-dice-area-${casinoIndex}`);
   if (!diceArea) return;
 
@@ -717,7 +717,7 @@ function animatePayout(payout, index) {
 
   const formatted = amount.toLocaleString() + ' $';
 
-  // 1) 카지노 안에서 이 금액과 같은 지폐 하나 찾기
+  // 1) 슬롯 안에서 이 금액과 같은 지폐 하나 찾기
   let sourceNote = null;
   const notes = Array.from(
     moneyList.getElementsByClassName('casino-money'),
@@ -734,7 +734,7 @@ function animatePayout(payout, index) {
 
   const sourceRect = sourceNote.getBoundingClientRect();
 
-  // 2) 원본 지폐는 카지노에서 제거 (이 순간부터 화면에서 사라짐)
+  // 2) 원본 지폐는 슬롯에서 제거 (이 순간부터 화면에서 사라짐)
   moneyList.removeChild(sourceNote);
 
   // 3) 화면에 날릴 지폐 하나 새로 만들어서 같은 위치에서 시작
@@ -767,7 +767,7 @@ function animatePayout(payout, index) {
     targetY = targetRect.top + targetRect.height / 2;
   }
 
-  // 같은 카지노 안에서도 한 장씩 순차적으로 날리기 위한 딜레이
+  // 같은 슬롯 안에서도 한 장씩 순차적으로 날리기 위한 딜레이
   const delay = 80 * (index ?? 0);
 
   setTimeout(() => {
@@ -794,7 +794,7 @@ function processNextPayoutBatch() {
 
   isProcessingPayouts = true;
 
-  // 큐에서 맨 앞(가장 먼저 온 카지노) 꺼내기
+  // 큐에서 맨 앞(가장 먼저 온 슬롯) 꺼내기
   const payouts = payoutQueue.shift();
  if (!payouts || payouts.length === 0) {
     // 비어 있으면 바로 다음
@@ -802,23 +802,23 @@ function processNextPayoutBatch() {
     return;
   }
 
-  // 🔹 여기서 이 batch가 어떤 카지노인지 알아내기
+  // 🔹 여기서 이 batch가 어떤 슬롯인지 알아내기
   const casinoIndex = payouts[0].casinoIndex;
   if (casinoIndex != null) {
     darkenTiedDiceForCasino(casinoIndex);
   }
-  // 혹시 몰라서, 이 카지노 안에서도 큰 돈부터 정렬
+  // 혹시 몰라서, 이 슬롯 안에서도 큰 돈부터 정렬
   const sorted = [...payouts].sort((a, b) => b.amount - a.amount);
 
   sorted.forEach((p, idx) => {
     addLog(
-      `${p.casinoIndex}번 카지노: ${p.playerName} 이(가) ${p.amount.toLocaleString()} $ 획득!`,
+      `${p.casinoIndex}번 슬롯: ${p.playerName} 이(가) ${p.amount.toLocaleString()} $ 획득!`,
     );
     // idx를 넘겨서 안에서 delay 줄 수 있게
     animatePayout(p, idx);
   });
 
-  // 이 batch 애니메이션이 끝날 때쯤 다음 카지노 처리
+  // 이 batch 애니메이션이 끝날 때쯤 다음 슬롯 처리
   // animatePayout 내부에서 한 장당 최대 ~650ms + idx*80ms 정도 쓰니까
   const perOneMs = 650;
   const gapMs = 80;
@@ -832,7 +832,7 @@ function processNextPayoutBatch() {
 
 
 
-// 선택한 카지노로 주사위 이동 애니메이션
+// 선택한 슬롯로 주사위 이동 애니메이션
 function animateDiceToCasino(playerId, casinoIndex, colorCount, neutralCount) {
   const sourceRect = rolledDiceRow.getBoundingClientRect();
   const targetArea = document.getElementById(`casino-dice-area-${casinoIndex}`);
