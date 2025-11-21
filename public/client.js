@@ -36,17 +36,29 @@ const casinoRow = document.getElementById('casino-row');
 const logArea = document.getElementById('log-area');
 const roundCountSelect = document.getElementById('round-count-select');
 
+// 🎵 오디오 & 슬라이더
 const bgm = document.getElementById('bgm');
 const sfxStart = document.getElementById('sfx-start');
 const sfxDice = document.getElementById('sfx-dice');
 const sfxMoney = document.getElementById('sfx-money');
 const sfxWin = document.getElementById('sfx-win');
-// 🔉 전체 사운드 볼륨 설정 (0.0 ~ 1.0)
-bgm.volume = 0.25;        // 배경음악은 잔잔하게
-sfxStart.volume = 0.4;    // 게임 시작
-sfxDice.volume = 0.45;    // 주사위
-sfxMoney.volume = 0.35;   // 돈
-sfxWin.volume = 0.5;      // 승리음 (조금 강조)
+
+const bgmVolumeSlider = document.getElementById('bgm-volume');
+
+// 기본 볼륨 세팅 (너가 듣기 좋은 값으로 조정 가능)
+if (bgm) bgm.volume = 0.25;
+if (sfxStart) sfxStart.volume = 0.4;
+if (sfxDice) sfxDice.volume = 0.45;
+if (sfxMoney) sfxMoney.volume = 0.35;
+if (sfxWin) sfxWin.volume = 0.5;
+
+// 🔊 슬라이더로 BGM 볼륨 조절
+if (bgm && bgmVolumeSlider) {
+  bgmVolumeSlider.addEventListener('input', (e) => {
+    const v = Number(e.target.value);
+    bgm.volume = v;
+  });
+}
 
 const avatarColorMap = {
   red: '#ff7675',
