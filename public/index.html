@@ -260,31 +260,66 @@
         flex-wrap: wrap;
       }
       
-/* 노란색 베팅 버튼 - 슬롯 가로폭 전체로 크게 */
+/* 크리스탈 느낌 골드 베팅 버튼 */
 .bet-btn {
-  width: 100%;              /* 슬롯 가로폭 = 버튼 가로폭 */
-  height: 48px;             /* 기존보다 약 1.7배 세로 증가 */
-  border-radius: 12px;
+  position: relative;
+  width: 100%;
+  height: 48px;                /* 세로 살짝 더 크게 */
+  padding: 0 24px;
+  border-radius: 999px;
+  border: 1px solid #fbbf24;   /* 밝은 골드 라인 */
+  
+  background: linear-gradient(
+    135deg,
+    #fff7d6 0%,
+    #fde68a 20%,
+    #facc15 45%,
+    #eab308 60%,
+    #fbbf24 80%,
+    #fef3c7 100%
+  );
 
-  font-size: 16px;
+  box-shadow:
+    0 3px 0 #b45309,                        /* 아래 짙은 골드 → 입체감 */
+    0 0 10px rgba(250, 204, 21, 0.6);      /* 주변 빛 번짐 */
+
+  color: #111827;
+  font-size: 15px;
   font-weight: 700;
-
-  background: rgba(250, 204, 21, 0.98);
-  border: 1px solid rgba(0,0,0,0.25);
+  letter-spacing: 0.02em;
   cursor: pointer;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  white-space: nowrap;
+  text-align: center;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.8);
+  overflow: hidden;                        /* 반짝 효과 잘리게 */
 }
 
-.bet-btn.hidden {
-  display: none;
+/* 위쪽 하이라이트 (유리/크리스탈 느낌) */
+.bet-btn::before {
+  content: '';
+  position: absolute;
+  inset: 3px 6px auto 6px;   /* 위쪽만 살짝 하이라이트 */
+  height: 45%;
+  border-radius: 999px;
+  background: linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0.9),
+    rgba(255, 255, 255, 0.2)
+  );
+  pointer-events: none;
 }
 
+/* 비활성화 상태 */
 .bet-btn:disabled {
-  opacity: 0.5;
+  opacity: 0.55;
   cursor: default;
+  box-shadow: 0 2px 0 #9ca3af;
+  background: linear-gradient(
+    135deg,
+    #e5e7eb,
+    #d4d4d8,
+    #e5e7eb
+  );
 }
       .die {
         width: 32px;
