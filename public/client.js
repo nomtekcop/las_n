@@ -575,17 +575,6 @@ function connectSocket() {
     updateRemainingDiceUI();
   });
 
-  socket.on('gameState', (state) => {
-    if (state.round) {
-      roundNumberSpan.textContent = String(state.round);
-    }
-    players = state.players || players;
-    currentTurnId = state.currentTurnId || currentTurnId;
-    if (state.maxRounds) {
-      currentMaxRounds = state.maxRounds;
-      roundCountSelect.value = String(state.maxRounds);
-    }
-
     socket.on('gameState', (state) => {
   if (state.round) {
     roundNumberSpan.textContent = String(state.round);
