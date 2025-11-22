@@ -22,52 +22,129 @@
         display: none;
       }
 
-      /* 프로필 설정 화면 */
-      #profile-screen {
-        width: 360px;
-        background: #ffffff;
-        border: 1px solid #ddd;
-        padding: 24px;
-        border-radius: 12px;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
-      }
-      #profile-screen h1 {
-        font-size: 18px;
-        margin: 0 0 8px;
-      }
-      #profile-screen label {
-        font-size: 14px;
-        display: block;
-        margin-top: 16px;
-        margin-bottom: 8px;
-      }
-      #nickname-input,
-      #color-select {
-        width: 100%;
-        padding: 10px 12px;
-        border: 1px solid #ccc;
-        border-radius: 8px;
-        font-size: 14px;
-      }
-      .avatar-dropzone {
-        width: 100%;
-        aspect-ratio: 1 / 1;
-        border: 1px dashed #bbb;
-        border-radius: 8px;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        font-size: 14px;
-        color: #777;
-        cursor: pointer;
-        position: relative;
-        overflow: hidden;
-      }
-      .avatar-dropzone img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-      }
+     /* 프로필 설정 화면 – VIP 카드 느낌 */
+#profile-screen {
+  width: 380px;
+  padding: 26px 24px 22px;
+  border-radius: 18px;
+
+  /* 딥네이비 + 딥그린 + 약한 골드 하이라이트 */
+  background:
+    radial-gradient(circle at 0% 0%, rgba(250, 204, 21, 0.18), transparent 55%),
+    radial-gradient(circle at 100% 100%, rgba(148, 163, 184, 0.2), transparent 55%),
+    linear-gradient(145deg, #020617, #022c22 55%, #020617);
+
+  color: #e5e7eb;
+  border: 1px solid rgba(148, 163, 184, 0.65);
+  box-shadow:
+    0 20px 40px rgba(0, 0, 0, 0.85),
+    0 0 0 1px rgba(15, 23, 42, 0.9);
+  backdrop-filter: blur(10px);
+}
+
+#profile-screen h1 {
+  font-size: 20px;
+  margin: 0 0 6px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #f9fafb;
+}
+
+#profile-screen label {
+  font-size: 13px;
+  display: block;
+  margin-top: 14px;
+  margin-bottom: 6px;
+  color: #cbd5f5;
+  letter-spacing: 0.05em;
+}
+
+/* 이름 입력 / 색깔 선택 인풋 */
+#nickname-input,
+#color-select {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 10px;
+  font-size: 14px;
+
+  background: rgba(15, 23, 42, 0.9);
+  border: 1px solid rgba(148, 163, 184, 0.8);
+  color: #e5e7eb;
+  outline: none;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+}
+
+#nickname-input::placeholder {
+  color: #6b7280;
+}
+
+/* 아바타 드롭존 – 칩/카드 올려놓는 패널 느낌 */
+.avatar-dropzone {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  border-radius: 12px;
+  border: 1px dashed rgba(234, 179, 8, 0.7);
+  background: radial-gradient(circle at 50% 0%, rgba(248, 250, 252, 0.12), transparent 55%),
+              rgba(15, 23, 42, 0.95);
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 14px;
+  color: #e5e7eb;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition:
+    border-color 0.15s ease,
+    box-shadow 0.15s ease,
+    transform 0.12s ease,
+    background 0.15s ease;
+}
+
+.avatar-dropzone:hover {
+  border-style: solid;
+  border-color: rgba(250, 204, 21, 0.9);
+  box-shadow: 0 0 16px rgba(250, 204, 21, 0.55);
+  transform: translateY(-1px);
+  background: radial-gradient(circle at 50% 0%, rgba(250, 250, 250, 0.18), transparent 55%),
+              rgba(15, 23, 42, 0.96);
+}
+
+.avatar-dropzone img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* 입장 버튼 – 블랙 + 골드 칩 느낌 */
+#enter-game-btn {
+  margin-top: 22px;
+  width: 100%;
+  padding: 12px;
+  border-radius: 999px;
+  border: none;
+  cursor: pointer;
+
+  background: linear-gradient(135deg, #facc15, #eab308, #b45309);
+  color: #111827;
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.7);
+  box-shadow:
+    0 3px 0 #78350f,
+    0 0 14px rgba(250, 204, 21, 0.7);
+}
+
+#enter-game-btn:disabled {
+  opacity: 0.6;
+  cursor: default;
+  box-shadow: none;
+}
+
+      
       /* 공통 버튼 효과 - 부드러운 애니메이션 */
 #enter-game-btn,
 #roll-btn,
@@ -780,6 +857,9 @@
 
   /* 🔑 다이아(::before)보다 위에 오게 */
   z-index: 1;
+
+  /* 🔥 숫자 살짝 위로 올림 */
+  transform: translateY(-2px);
 }
 
 /* 다이아몬드 모양 배경 */
