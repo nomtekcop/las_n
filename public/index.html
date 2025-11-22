@@ -22,44 +22,38 @@
         display: none;
       }
 
-     /* 프로필 설정 화면 – VIP 카드 느낌 */
+ /* ───── 프로필 카드 전체 ───── */
 #profile-screen {
-  width: 380px;
-  padding: 26px 24px 22px;
-  border-radius: 18px;
+  width: 360px;
+  padding: 24px;                  /* 원래 느낌으로 살짝 줄임 */
+  border-radius: 20px;
 
-  /* 딥네이비 + 딥그린 + 약한 골드 하이라이트 */
-  background:
-    radial-gradient(circle at 0% 0%, rgba(250, 204, 21, 0.18), transparent 55%),
-    radial-gradient(circle at 100% 100%, rgba(148, 163, 184, 0.2), transparent 55%),
-    linear-gradient(145deg, #020617, #022c22 55%, #020617);
+  background: #000000;            /* 진짜 새까만 블랙 */
+  border: 1px solid rgba(255, 255, 255, 0.12);
 
-  color: #e5e7eb;
-  border: 1px solid rgba(148, 163, 184, 0.65);
+  color: #ffffff;
   box-shadow:
-    0 20px 40px rgba(0, 0, 0, 0.85),
-    0 0 0 1px rgba(15, 23, 42, 0.9);
-  backdrop-filter: blur(10px);
+    0 22px 45px rgba(0, 0, 0, 0.95),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
 }
 
 #profile-screen h1 {
-  font-size: 20px;
-  margin: 0 0 6px;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: #f9fafb;
+  font-size: 22px;
+  font-weight: 700;
+  margin: 0 0 8px;
+  color: #ffffff;
+  letter-spacing: 0.06em;
 }
 
+/* 라벨 간격: 예전처럼 여유 있게 */
 #profile-screen label {
-  font-size: 13px;
+  font-size: 14px;
   display: block;
-  margin-top: 14px;
-  margin-bottom: 6px;
-  color: #cbd5f5;
-  letter-spacing: 0.05em;
+  margin-top: 16px;   /* ↑ 글자와 위 요소 간격 */
+  margin-bottom: 8px; /* ↓ 글자와 입력칸 간격 */
+  color: #ffffff;
 }
 
-/* 이름 입력 / 색깔 선택 인풋 */
 #nickname-input,
 #color-select {
   width: 100%;
@@ -67,81 +61,104 @@
   border-radius: 10px;
   font-size: 14px;
 
-  background: rgba(15, 23, 42, 0.9);
-  border: 1px solid rgba(148, 163, 184, 0.8);
-  color: #e5e7eb;
-  outline: none;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  background: #050505;  /* 더 깊은 블랙 */
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #ffffff;
 }
 
 #nickname-input::placeholder {
-  color: #6b7280;
+  color: #777777;
 }
 
-/* 아바타 드롭존 – 칩/카드 올려놓는 패널 느낌 */
+#nickname-input:focus,
+#color-select:focus {
+  border-color: #d4af37; /* 골드 포인트 */
+  box-shadow: 0 0 8px rgba(212, 175, 55, 0.75);
+}
+      
 .avatar-dropzone {
   width: 100%;
   aspect-ratio: 1 / 1;
-  border-radius: 12px;
-  border: 1px dashed rgba(234, 179, 8, 0.7);
-  background: radial-gradient(circle at 50% 0%, rgba(248, 250, 252, 0.12), transparent 55%),
-              rgba(15, 23, 42, 0.95);
+  border-radius: 14px;
+
+  background: #050505;                            /* 진한 블랙 */
+  border: 1px dashed rgba(212, 175, 55, 0.75);    /* 골드 테두리 */
+  color: #f5f5f5;
 
   display: flex;
   justify-content: center;
   align-items: center;
   font-size: 14px;
-  color: #e5e7eb;
   cursor: pointer;
+
   position: relative;
   overflow: hidden;
-  transition:
-    border-color 0.15s ease,
-    box-shadow 0.15s ease,
-    transform 0.12s ease,
-    background 0.15s ease;
+  transition: all 0.2s ease;
 }
 
 .avatar-dropzone:hover {
-  border-style: solid;
-  border-color: rgba(250, 204, 21, 0.9);
-  box-shadow: 0 0 16px rgba(250, 204, 21, 0.55);
-  transform: translateY(-1px);
-  background: radial-gradient(circle at 50% 0%, rgba(250, 250, 250, 0.18), transparent 55%),
-              rgba(15, 23, 42, 0.96);
+  border-color: #ffe08a;                          /* 더 밝은 골드 */
+  color: #ffffff;
+  box-shadow: 0 0 14px rgba(250, 204, 21, 0.95);
 }
 
+/* 이미지 들어올 때 */
 .avatar-dropzone img {
   width: 100%;
   height: 100%;
   object-fit: cover;
 }
 
-/* 입장 버튼 – 블랙 + 골드 칩 느낌 */
+/* 기본: 딥 레드 + 골드 라인 */
 #enter-game-btn {
   margin-top: 22px;
   width: 100%;
   padding: 12px;
   border-radius: 999px;
-  border: none;
-  cursor: pointer;
 
-  background: linear-gradient(135deg, #facc15, #eab308, #b45309);
-  color: #111827;
-  font-size: 15px;
-  font-weight: 700;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.7);
-  box-shadow:
-    0 3px 0 #78350f,
-    0 0 14px rgba(250, 204, 21, 0.7);
+  background: linear-gradient(
+    135deg,
+    #3a0202,
+    #6d0505,
+    #900b0b
+  );                              /* 어두운 와인 레드 */
+  border: 1px solid #d4af37;      /* 골드 라인 */
+
+  color: #ffffff;
+  font-size: 16px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+
+  cursor: pointer;
+  transition: 0.15s ease;
 }
 
+/* hover: 훨씬 밝은 레드로 확 튀게 */
+#enter-game-btn:hover {
+  background: linear-gradient(
+    135deg,
+    #b30000,
+    #e30606,
+    #ff1a1a
+  );                              /* 선명한 레드 */
+  box-shadow:
+    0 0 16px rgba(255, 36, 36, 0.9),
+    0 0 22px rgba(212, 175, 55, 0.9);
+}
+
+/* 눌렀을 때 살짝 눌리는 느낌 */
+#enter-game-btn:active {
+  transform: translateY(1px) scale(0.98);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.7);
+}
+
+/* 비활성화 */
 #enter-game-btn:disabled {
-  opacity: 0.6;
-  cursor: default;
+  opacity: 0.5;
+  background: #333333;
+  border-color: rgba(255, 255, 255, 0.2);
   box-shadow: none;
+  cursor: default;
 }
 
       
