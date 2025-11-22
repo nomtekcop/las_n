@@ -177,7 +177,7 @@
     inset 0 1px 0 rgba(255,255,255,0.06);
 }
 
-     /* ROUND N 보석 느낌 헤더 */
+/* ROUND N 헤더 – 네이비 + 블루 그라디언트 */
 #round-header {
   font-size: 24px;
   font-weight: 800;
@@ -185,25 +185,19 @@
   text-transform: uppercase;
 
   position: relative;
-  padding: 8px 28px;
+  padding: 8px 32px;
   border-radius: 999px;
-
-  /* 안쪽은 짙은 초록/검정, 바깥은 골드 링 */
-  background:
-    radial-gradient(circle at 50% 0%, #facc15 0%, #f59e0b 18%, transparent 55%),
-    radial-gradient(circle at 50% 100%, #fbbf24 0%, transparent 50%),
-    linear-gradient(145deg, #020617, #064e3b 50%, #020617 100%);
-
-  border: 2px solid rgba(250, 204, 21, 0.95);
-  color: #f9fafb;
-  text-shadow:
-    0 0 6px rgba(0,0,0,0.9),
-    0 2px 0 rgba(0,0,0,0.7);
-
-  box-shadow:
-    0 0 18px rgba(250, 204, 21, 0.9),
-    0 10px 25px rgba(0,0,0,0.8);
   margin: 0 auto 4px auto;
+
+  background: linear-gradient(135deg, #0f172a, #1d4ed8);
+  color: #e5f2ff;
+  border: 1px solid rgba(248, 250, 252, 0.8);
+  box-shadow:
+    0 0 16px rgba(59, 130, 246, 0.8),
+    0 10px 25px rgba(0, 0, 0, 0.8);
+  text-shadow:
+    0 2px 4px rgba(15, 23, 42, 0.9);
+}0 auto 4px auto;
 }
 
       #top-player-area {
@@ -268,8 +262,7 @@
   gap: 8px;
   text-align: center;
 
-  /* 완전 흰색 대신, 살짝 아이보리 유리 패널 느낌 */
-  background: radial-gradient(circle at 50% 0%, #fefce8 0%, #f5f5f4 35%, #e5e7eb 100%);
+  background: #ffffff;
   border-radius: 14px;
   padding: 10px 18px;
   border: 1px solid rgba(255, 255, 255, 0.8);
@@ -672,14 +665,14 @@
       /* 굴린 주사위 아래, 슬롯 6개와 가로 위치 맞추는 베팅 버튼 줄 */
 #choice-row {
   display: grid;
-  grid-template-columns: repeat(6, 1fr);  /* 슬롯 6개와 가로 정렬 */
-  gap: 16px;                              /* 버튼 사이 간격 넉넉하게 */
+  grid-template-columns: repeat(6, 1fr);
+  gap: 8px;                 /* 🔧 슬롯(.casino)의 gap 8px 과 맞추기 */
   margin-top: 12px;
   min-height: 48px;
-  width: 100%;                            /* 게임판 전체 너비 사용 */
+  width: 100%;
   align-self: stretch;
 }
-
+      
 /* 각 칸(슬롯별 버튼 자리) */
 .choice-cell {
   display: flex;
@@ -767,7 +760,6 @@
   margin-bottom: 4px;
 }
 
-      /* 슬롯 번호 다이아 크리스탈 */
 .casino-die {
   position: relative;
   width: 32px;
@@ -776,16 +768,16 @@
   align-items: center;
   justify-content: center;
 
-  /* 배경은 투명, 테두리도 제거 → 다이아는 ::before에서 그림 */
   background: transparent;
   border: none;
-  color: #111827;
-  font-size: 14px;
-  font-weight: 700;
-  font-style: italic;
-  letter-spacing: 0.03em;
-  z-index: 1; /* 다이아 위에 숫자 올라오게 */
-  text-shadow: 0 1px 0 rgba(255,255,255,0.7);
+  color: #111111;             /* 🔧 더 진한 글자색 */
+  font-size: 16px;            /* 🔧 숫자 조금 키우기 */
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  z-index: 1;
+  text-shadow:
+    0 0 2px rgba(255, 255, 255, 0.9),
+    0 1px 1px rgba(0,0,0,0.6);
 }
 
 /* 다이아몬드 모양 배경 */
@@ -977,7 +969,7 @@
 }
 
 .dice-count span {
-  color: #333;
+  color: #111;
 }
 
       
