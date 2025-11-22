@@ -127,7 +127,7 @@ function renderOpponentPanels() {
     panel.dataset.playerId = p.id;
 
     // 아바타 src, 이름, 돈, 주사위 표시 자리
-    const avatarSrc = p.avatar || '';
+    const avatarSrc = p.avatar || 'default-avatar.png';
     const displayName = p.name || '플레이어';
 
     panel.innerHTML = `
@@ -507,7 +507,7 @@ function connectSocket() {
     myId = info.id;
     myNameSpan.textContent = info.name || '나';
     myMoneySpan.textContent = (info.money ?? 0) + ' $';
-    if (info.avatar) myAvatarImg.src = info.avatar;
+    myAvatarImg.src = info.avatar || 'default-avatar.png';
   });
 
   socket.on('playerList', (list) => {
@@ -516,15 +516,14 @@ function connectSocket() {
   const me = list.find((p) => p.id === myId);
 
   if (me) {
-    isHost = me.index === 1;
-    // 내 이름, 돈, 아바타 갱신
-    myNameSpan.textContent = me.name || '나';
-    myMoneySpan.textContent = (me.money ?? 0).toLocaleString() + ' $';
-    if (me.avatar) myAvatarImg.src = me.avatar;
+  isHost = me.index === 1;
+  // 내 이름, 돈, 아바타 갱신
+  myNameSpan.textContent = me.name || '나';
+  myMoneySpan.textContent = (me.money ?? 0).toLocaleString() + ' $';
+  myAvatarImg.src = me.avatar || 'default-avatar.png';
 
-    // 내 돈 span에도 playerId 달아두면 나중에 공통 처리 편해짐
-    myMoneySpan.dataset.playerId = me.id;
-  }
+  myMoneySpan.dataset.playerId = me.id;
+}
 
   // 시작 버튼 활성화 조건: 2~4명, 아직 게임 시작 전, 내가 호스트일 때
   if (me) {
