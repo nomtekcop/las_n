@@ -588,6 +588,7 @@ function connectSocket() {
 });
 
   socket.on('roundSetup', (payload) => {
+    play(sfxStart);
     animateRoundSetup(payload);
   });
 
