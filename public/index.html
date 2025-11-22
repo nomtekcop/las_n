@@ -156,7 +156,7 @@
 #game-screen {
   width: 100%;
   max-width: 1200px;
-  height: 90vh;
+  min-height: 90vh;
 
   /* 진한 초록 벨벳 그라디언트 */
   background:
@@ -770,16 +770,18 @@
 
   background: transparent;
   border: none;
-  color: #111111;             /* 🔧 더 진한 글자색 */
-  font-size: 16px;            /* 🔧 숫자 조금 키우기 */
-  font-weight: 800;
-  letter-spacing: 0.04em;
+
+  /* 🔧 숫자 강조 */
+  color: #000000;
+  font-size: 18px;
+  font-weight: 900;
+  letter-spacing: 0.02em;
   z-index: 1;
   text-shadow:
     0 0 2px rgba(255, 255, 255, 0.9),
-    0 1px 1px rgba(0,0,0,0.6);
+    0 1px 1px rgba(0,0,0,0.7);
 }
-
+      
 /* 다이아몬드 모양 배경 */
 .casino-die::before {
   content: '';
