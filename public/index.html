@@ -177,7 +177,6 @@
     inset 0 1px 0 rgba(255,255,255,0.06);
 }
 
-/* ROUND N 헤더 – 네이비 + 블루 그라디언트 */
 #round-header {
   font-size: 24px;
   font-weight: 800;
@@ -197,9 +196,8 @@
     0 10px 25px rgba(0, 0, 0, 0.8);
   text-shadow:
     0 2px 4px rgba(15, 23, 42, 0.9);
-}0 auto 4px auto;
 }
-
+      
       #top-player-area {
   display: flex;
   justify-content: center;
@@ -771,17 +769,19 @@
   background: transparent;
   border: none;
 
-  /* 🔧 숫자 강조 */
+  /* 숫자 스타일 */
   color: #000000;
   font-size: 18px;
   font-weight: 900;
   letter-spacing: 0.02em;
-  z-index: 1;
   text-shadow:
     0 0 2px rgba(255, 255, 255, 0.9),
     0 1px 1px rgba(0,0,0,0.7);
+
+  /* 🔑 다이아(::before)보다 위에 오게 */
+  z-index: 1;
 }
-      
+
 /* 다이아몬드 모양 배경 */
 .casino-die::before {
   content: '';
@@ -789,10 +789,9 @@
   inset: 3px;
   background: linear-gradient(
     135deg,
-    #ffffff,
     #e5e7eb,
-    #f9fafb,
-    #fefce8
+    #d4d4d8,
+    #f9fafb
   );
   border-radius: 6px;
   box-shadow:
@@ -800,6 +799,9 @@
     0 2px 4px rgba(0,0,0,0.45);
   transform: rotate(45deg); /* 다이아 형태 */
   border: 1px solid rgba(209,213,219,0.9);
+
+  /* 🔑 숫자보다 뒤로 */
+  z-index: -1;
 }
       
       .casino-header {
